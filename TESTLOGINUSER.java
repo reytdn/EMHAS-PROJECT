@@ -24,6 +24,7 @@ public class TESTLOGINUSER {
         System.out.println("| 3. ER Nurse                          |");
         System.out.println("| 4. Paramedic                         |");
         System.out.println("========================================");
+        System.out.println();
         System.out.print("Select Option: ");
         int Option = Integer.parseInt(scanner.nextLine());
 

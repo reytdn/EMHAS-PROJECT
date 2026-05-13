@@ -1,10 +1,10 @@
 import java.util.*;
 
-public class EMHASREGISTER {
+public class EMHASREGISTERUSER {
     private MAINSYSTEM mainsystem;
     private Scanner INPUT;
 
-    public EMHASREGISTER(MAINSYSTEM mainsystem, Scanner INPUT){
+    public EMHASREGISTERUSER(MAINSYSTEM mainsystem, Scanner INPUT){
         this.mainsystem = mainsystem;
         this.INPUT = INPUT;
     }

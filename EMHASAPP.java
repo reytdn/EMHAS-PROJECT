@@ -24,7 +24,8 @@ public class EMHASAPP {
                 INPUT.nextLine();
 
                 if (Option == 1){
-                    
+                    EMHASREGISTERPATIENT registerpat = new EMHASREGISTERPATIENT(INPUT, mainsystem);
+                    registerpat.REGISTERPATIENTS();
                 }
 
                 else if (Option == 2){
@@ -44,8 +45,8 @@ public class EMHASAPP {
                 }
 
                 else if (Option == 6){
-                    EMHASREGISTER register = new EMHASREGISTER(mainsystem, INPUT);
-                    register.REGISTERPERSONNELS();
+                    EMHASREGISTERUSER registeruser = new EMHASREGISTERUSER(mainsystem, INPUT);
+                    registeruser.REGISTERPERSONNELS();
 
                 }
 
@@ -69,8 +70,7 @@ public class EMHASAPP {
                 System.out.println("| 2. Search Patient Record             |");
                 System.out.println("| 3. Edit Patient Record               |");
                 System.out.println("| 4. Access Patient Record             |");
-                System.out.println("| 5. View Emergency Access Logs        |");
-                System.out.println("| 6. Return To Main Menu               |");
+                System.out.println("| 5. Return To Main Menu               |");
                 System.out.println("========================================");
                 System.out.println();
                 System.out.print("Select Option: ");
@@ -78,6 +78,8 @@ public class EMHASAPP {
                 INPUT.nextLine();
 
                 if (Option == 1){
+                    EMHASREGISTERPATIENT registerpat = new EMHASREGISTERPATIENT(INPUT, mainsystem);
+                    registerpat.REGISTERPATIENTS();
                     
                 }
 
@@ -94,10 +96,6 @@ public class EMHASAPP {
                 }
 
                 else if (Option == 5){
-
-                }
-
-                else if (Option == 6){
                     System.out.println();
                     System.out.println("Returning Back To Main Menu.....");
                     break;
@@ -107,9 +105,6 @@ public class EMHASAPP {
                     continue;
                 }
             }
-            
-
-
         }
     }    
 }

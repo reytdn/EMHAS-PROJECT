@@ -17,6 +17,7 @@ public class TESTLOGINADMIN {
             System.out.println();
             System.out.print("Enter username: ");
             String username = scanner.nextLine();
+            System.out.println();
             System.out.print("Enter password: ");
             String password = scanner.nextLine();
 

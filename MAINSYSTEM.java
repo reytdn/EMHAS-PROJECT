@@ -1,5 +1,6 @@
 
 import java.sql.*;
+import java.util.List;
 
 
 public class MAINSYSTEM {
@@ -35,6 +36,54 @@ public class MAINSYSTEM {
             return false;
         }
     }
+
+    public boolean REGISTER_PATIENT(String patientid, String fname, String lname, String mi, String emergencycontact, String bloodtype,
+        List<String> allergies, List<String> conditions, List<String> medications){
+            try(Connection connection = DATACONNECTION.getConnection()){
+                String INSERTQUERYPATIENT = "INSERT INTO patients (patientid, fname, lname, mi, emergencycontact, bloodtype) VALUES (?, ?, ? ,?, ?, ?)";
+                PreparedStatement preppat = connection.prepareStatement(INSERTQUERYPATIENT);
+                preppat.setString(1, patientid);
+                preppat.setString(2, fname);
+                preppat.setString(3, lname);
+                preppat.setString(4, mi);
+                preppat.setString(5, emergencycontact);
+                preppat.setString(6, bloodtype);
+                preppat.executeUpdate();
+
+                String INSERTQUERYALLERGIES = "INSERT INTO patient_allergies (patientid, allergies) VALUES (?, ?)";
+                PreparedStatement prepallergy = connection.prepareStatement(INSERTQUERYALLERGIES);
+                for (String allergy : allergies){
+                    prepallergy.setString(1, patientid);
+                    prepallergy.setString(2, allergy); 
+                    prepallergy.executeUpdate();
+                }
+                
+
+
+                String INSERTQUERYCONDITIONS = "INSERT INTO patient_conditions (patientid, conditions) VALUES (?, ?)";
+                PreparedStatement prepcondition = connection.prepareStatement(INSERTQUERYCONDITIONS);
+                for (String condition : conditions){
+                    prepcondition.setString(1, patientid);
+                    prepcondition.setString(2, condition); 
+                    prepcondition.executeUpdate();
+                }
+
+                String INSERTQUERYMEDICATIONS = "INSERT INTO patient_medications (patientid, medications) VALUES (?, ?)";
+                PreparedStatement prepmedication = connection.prepareStatement(INSERTQUERYMEDICATIONS);
+                for (String medication : medications){
+                    prepmedication.setString(1, patientid);
+                    prepmedication.setString(2, medication); 
+                    prepmedication.executeUpdate();
+                }
+                return true;
+                
+            } catch (SQLException e){
+                System.out.println();
+                System.out.println("Error registring patient: " + e.getMessage());
+                return false;
+            }
+        }
+
     public boolean REGISTER_USER(String fname, String lname, String mi, String profession, String username, String password){
         String table = "";
 
@@ -52,9 +101,9 @@ public class MAINSYSTEM {
             return false;
         }
 
-        String INSERTQUERY = "INSERT INTO " + table + " (fname, lname, mi, profession, username, password) VALUES (?, ?, ?, ?, ?, ?)";
+        String INSERTQUERYUSER = "INSERT INTO " + table + " (fname, lname, mi, profession, username, password) VALUES (?, ?, ?, ?, ?, ?)";
         try(Connection connection = DATACONNECTION.getConnection()){
-            PreparedStatement prepstat = connection.prepareStatement(INSERTQUERY);
+            PreparedStatement prepstat = connection.prepareStatement(INSERTQUERYUSER);
             prepstat.setString(1, fname);
             prepstat.setString(2, lname);
             prepstat.setString(3, mi);
