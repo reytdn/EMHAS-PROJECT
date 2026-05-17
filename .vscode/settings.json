@@ -3,6 +3,7 @@
         "."
     ],
     "java.project.referencedLibraries": [
-        "mysql-connector-j-9.7.0.jar"
+        "pdfbox-app-3.0.7.jar",
+        "c:\\Users\\ASITSD\\Desktop\\TASKS\\EMHAS PROJECT\\mysql-connector-j-9.7.0.jar"
     ]
 }

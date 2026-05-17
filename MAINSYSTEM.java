@@ -1,7 +1,5 @@
-
 import java.sql.*;
-import java.util.List;
-
+import java.util.*;
 
 public class MAINSYSTEM {
     
@@ -117,6 +115,56 @@ public class MAINSYSTEM {
             return false;
         }
     }
+
+    public List<String> ACCESS_EMERGENCY(String patientId) {
+        List<String> logs = new ArrayList<>();
+        try(Connection connection = DATACONNECTION.getConnection()) {
+            
+            // Patient core info
+            String patientQuery = "SELECT fname, lname, mi, bloodtype, emergencycontact FROM patients WHERE patientid = ?";
+            PreparedStatement stmt = connection.prepareStatement(patientQuery);
+            stmt.setString(1, patientId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()) {
+                logs.add("Patient: " + rs.getString("fname") + " " + rs.getString("mi") + " " + rs.getString("lname"));
+                logs.add("Blood Type: " + rs.getString("bloodtype"));
+                logs.add("Emergency Contact: " + rs.getString("emergencycontact"));
+            }
+
+            // Allergies
+            String allergyQuery = "SELECT allergies FROM patient_allergies WHERE patientid = ?";
+            stmt = connection.prepareStatement(allergyQuery);
+            stmt.setString(1, patientId);
+            rs = stmt.executeQuery();
+            List<String> allergies = new ArrayList<>();
+            while(rs.next()) allergies.add(rs.getString("allergies"));
+            logs.add("Allergies: " + String.join(", ", allergies));
+
+            // Conditions
+            String conditionQuery = "SELECT conditions FROM patient_conditions WHERE patientid = ?";
+            stmt = connection.prepareStatement(conditionQuery);
+            stmt.setString(1, patientId);
+            rs = stmt.executeQuery();
+            List<String> conditions = new ArrayList<>();
+            while(rs.next()) conditions.add(rs.getString("conditions"));
+            logs.add("Conditions: " + String.join(", ", conditions));
+
+            // Medications
+            String medicationQuery = "SELECT medications FROM patient_medications WHERE patientid = ?";
+            stmt = connection.prepareStatement(medicationQuery);
+            stmt.setString(1, patientId);
+            rs = stmt.executeQuery();
+            List<String> medications = new ArrayList<>();
+            while(rs.next()) medications.add(rs.getString("medications"));
+            logs.add("Medications: " + String.join(", ", medications));
+
+        } catch(Exception e) {
+            System.out.println("Error fetching patient logs: " + e.getMessage());
+        }
+        return logs;
+    }
+
+
 }
 
 
