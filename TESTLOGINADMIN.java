@@ -9,7 +9,6 @@ public class TESTLOGINADMIN {
     private Scanner scanner;
  
     // store logged in admin username, full name, and profession
-    private String loggedInUserName;
     private String loggedInFullName;
     private String loggedInUserProfession = "Admin";
  
