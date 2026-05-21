@@ -1,9 +1,10 @@
 import java.io.File;
 import java.util.*;
 
-
 public class EMHASAPP {
-    public static void second(String Role, MAINSYSTEM mainsystem, Scanner INPUT) {
+    // Updated signature: now accepts username, full name, and profession
+    public static void second(String Role, MAINSYSTEM mainsystem, Scanner INPUT,
+                               String currentFullName, String currentUserProfession) {
 
         while (true) {
             if (Role.equalsIgnoreCase("Admin")){
@@ -30,55 +31,56 @@ public class EMHASAPP {
                 }
 
                 else if (Option == 2){
+                    System.out.println();
+                    System.out.print("Enter PatientID to Search: ");
+                    String patientId = INPUT.nextLine();
 
+                    // log with full name
+                    mainsystem.LOG_ACCESS(currentFullName, currentUserProfession, patientId, "Search Patient Record");
                 }
 
                 else if (Option == 3){
-
+                    // future edit patient record logic
                 }
 
                 else if (Option == 4){
-
-                }
-
-                else if (Option == 5){
                     System.out.println();
-                    System.out.print("Enter Patient ID to view logs: ");
+                    System.out.print("Enter PatientID To View Details: ");
                     String patientId = INPUT.nextLine();
 
                     List<String> logs = mainsystem.ACCESS_EMERGENCY(patientId);
 
                     if (logs.isEmpty()) {
-                        System.out.println();
                         System.out.println("No records found for Patient ID: " + patientId);
                     } else {
-                        // Show logs in console
                         for(String log : logs){
-                            System.out.println();
                             System.out.println(log);
                         }
 
-                        // Generate PDF with Arial font
                         EMHASEMERGENCYACCESS.ACCESSEMERGENCY(logs, patientId);
 
-                        // Auto-open PDF
                         try {
                             File pdfFile = new File("logs_" + patientId + ".pdf");
                             if (pdfFile.exists()) {
                                 java.awt.Desktop.getDesktop().open(pdfFile);
                             }
                         } catch (Exception ex) {
-                            System.out.println();
                             System.out.println("Could not open PDF: " + ex.getMessage());
                         }
-                    }
 
+                        // log with full name
+                        mainsystem.LOG_ACCESS(currentFullName, currentUserProfession, patientId, "Emergency Record Access");
+                    }
+                }
+
+                else if (Option == 5){
+                    EMHASVIEWACCESSLOGS viewLogs = new EMHASVIEWACCESSLOGS(mainsystem);
+                    viewLogs.SHOW_ALL_LOGS();
                 }
 
                 else if (Option == 6){
                     EMHASREGISTERUSER registeruser = new EMHASREGISTERUSER(INPUT, mainsystem);
                     registeruser.REGISTERPERSONNELS();
-
                 }
 
                 else if (Option == 7){
@@ -88,9 +90,7 @@ public class EMHASAPP {
                 } else {
                     System.out.println();
                     System.out.println("Invalid Choice. Choose Options 1-7 Only.");
-                    continue;
                 }
-
 
             } else if (Role.equalsIgnoreCase("User")){
                 System.out.println();
@@ -111,20 +111,25 @@ public class EMHASAPP {
                 if (Option == 1){
                     EMHASREGISTERPATIENT registerpat = new EMHASREGISTERPATIENT(INPUT, mainsystem);
                     registerpat.REGISTERPATIENTS();
-                    
                 }
 
                 else if (Option == 2){
+                    System.out.println();
+                    System.out.print("Enter PatientID to Search: ");
+                    String patientId = INPUT.nextLine();
 
+                    // log with full name
+                    mainsystem.LOG_ACCESS(currentFullName, currentUserProfession, patientId, "Search Patient Record");
+                    
                 }
 
                 else if (Option == 3){
-
+                    // future edit patient record logic
                 }
 
                 else if (Option == 4){
                     System.out.println();
-                    System.out.print("Enter Patient ID to view logs: ");
+                    System.out.print("Enter PatientID To View Details: ");
                     String patientId = INPUT.nextLine();
 
                     List<String> logs = mainsystem.ACCESS_EMERGENCY(patientId);
@@ -132,15 +137,12 @@ public class EMHASAPP {
                     if (logs.isEmpty()) {
                         System.out.println("No records found for Patient ID: " + patientId);
                     } else {
-                        // Show logs in console
                         for(String log : logs){
                             System.out.println(log);
                         }
 
-                        // Generate PDF with Arial font
                         EMHASEMERGENCYACCESS.ACCESSEMERGENCY(logs, patientId);
 
-                        // Auto-open PDF
                         try {
                             File pdfFile = new File("logs_" + patientId + ".pdf");
                             if (pdfFile.exists()) {
@@ -149,9 +151,10 @@ public class EMHASAPP {
                         } catch (Exception ex) {
                             System.out.println("Could not open PDF: " + ex.getMessage());
                         }
+
+                        // log with full name
+                        mainsystem.LOG_ACCESS(currentFullName, currentUserProfession, patientId, "Emergency Record Access");
                     }
-
-
                 }
 
                 else if (Option == 5){
@@ -160,8 +163,7 @@ public class EMHASAPP {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Invalid Choice. Choose Options 1-6 Only.");
-                    continue;
+                    System.out.println("Invalid Choice. Choose Options 1-5 Only.");
                 }
             }
         }
