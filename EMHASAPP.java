@@ -1,4 +1,3 @@
-import java.io.File;
 import java.util.*;
 
 public class EMHASAPP {
@@ -30,12 +29,11 @@ public class EMHASAPP {
                     registerpat.REGISTERPATIENTS();
                 }
 
-                else if (Option == 2){
-                    System.out.println();
-                    System.out.print("Enter PatientID to Search: ");
-                    String patientId = INPUT.nextLine();
+                else if (Option == 2) {
+                    EMHASSEARCHPATIENT searchpatient = new EMHASSEARCHPATIENT(mainsystem, INPUT);
+                    String patientId = searchpatient.SEARCHPATIENT(); // capture returned ID
 
-                    // log with full name
+                    // log with full name (centralized in menu)
                     mainsystem.LOG_ACCESS(currentFullName, currentUserProfession, patientId, "Search Patient Record");
                 }
 
@@ -43,32 +41,26 @@ public class EMHASAPP {
                     // future edit patient record logic
                 }
 
-                else if (Option == 4){
+                else if (Option == 4) {
                     System.out.println();
                     System.out.print("Enter PatientID To View Details: ");
                     String patientId = INPUT.nextLine();
 
+                    // Retrieve all emergency data in one list
                     List<String> logs = mainsystem.ACCESS_EMERGENCY(patientId);
 
                     if (logs.isEmpty()) {
                         System.out.println("No records found for Patient ID: " + patientId);
                     } else {
-                        for(String log : logs){
+                        // Show logs in console
+                        for (String log : logs) {
                             System.out.println(log);
                         }
 
+                        // Generate PDF (this already saves and auto-opens)
                         EMHASEMERGENCYACCESS.ACCESSEMERGENCY(logs, patientId);
 
-                        try {
-                            File pdfFile = new File("logs_" + patientId + ".pdf");
-                            if (pdfFile.exists()) {
-                                java.awt.Desktop.getDesktop().open(pdfFile);
-                            }
-                        } catch (Exception ex) {
-                            System.out.println("Could not open PDF: " + ex.getMessage());
-                        }
-
-                        // log with full name
+                        // Log access with full name and profession
                         mainsystem.LOG_ACCESS(currentFullName, currentUserProfession, patientId, "Emergency Record Access");
                     }
                 }
@@ -113,49 +105,42 @@ public class EMHASAPP {
                     registerpat.REGISTERPATIENTS();
                 }
 
-                else if (Option == 2){
-                    System.out.println();
-                    System.out.print("Enter PatientID to Search: ");
-                    String patientId = INPUT.nextLine();
+                else if (Option == 2) {
+                    EMHASSEARCHPATIENT searchpatient = new EMHASSEARCHPATIENT(mainsystem, INPUT);
+                    String patientId = searchpatient.SEARCHPATIENT(); // capture returned ID
 
-                    // log with full name
+                    // log with full name (centralized in menu)
                     mainsystem.LOG_ACCESS(currentFullName, currentUserProfession, patientId, "Search Patient Record");
-                    
                 }
 
                 else if (Option == 3){
                     // future edit patient record logic
                 }
 
-                else if (Option == 4){
+                else if (Option == 4) {
                     System.out.println();
                     System.out.print("Enter PatientID To View Details: ");
                     String patientId = INPUT.nextLine();
 
+                    // Retrieve all emergency data in one list
                     List<String> logs = mainsystem.ACCESS_EMERGENCY(patientId);
 
                     if (logs.isEmpty()) {
                         System.out.println("No records found for Patient ID: " + patientId);
                     } else {
-                        for(String log : logs){
+                        // Show logs in console
+                        for (String log : logs) {
                             System.out.println(log);
                         }
 
+                        // Generate PDF (this already saves and auto-opens)
                         EMHASEMERGENCYACCESS.ACCESSEMERGENCY(logs, patientId);
 
-                        try {
-                            File pdfFile = new File("logs_" + patientId + ".pdf");
-                            if (pdfFile.exists()) {
-                                java.awt.Desktop.getDesktop().open(pdfFile);
-                            }
-                        } catch (Exception ex) {
-                            System.out.println("Could not open PDF: " + ex.getMessage());
-                        }
-
-                        // log with full name
+                        // Log access with full name and profession
                         mainsystem.LOG_ACCESS(currentFullName, currentUserProfession, patientId, "Emergency Record Access");
                     }
                 }
+
 
                 else if (Option == 5){
                     System.out.println();

@@ -13,15 +13,15 @@ public class EMHASVIEWACCESSLOGS {
         List<String> logs = mainsystem.GET_ALL_ACCESS_LOGS();
 
         if (logs.isEmpty()) {
-            System.out.println("\nNo emergency access logs found.");
+            System.out.println();
+            System.out.println("No emergency access logs found.");
         } else {
-            System.out.println("\n===== Emergency Access Logs =====");
+            System.out.println();
+            System.out.println("===== Emergency Access Logs =====");
             System.out.println();
             for (String log : logs) {
                 System.out.println(log);
             }
         }
     }
-
-    
 }

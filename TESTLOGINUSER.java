@@ -7,7 +7,6 @@ public class TESTLOGINUSER {
     private Scanner scanner;
 
     // store logged in user username, full name, and profession
-    private String loggedInUserName;
     private String loggedInFullName;
     private String loggedInUserProfession;
 

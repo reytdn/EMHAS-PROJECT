@@ -1,6 +1,7 @@
 import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -12,46 +13,41 @@ public class EMHASEMERGENCYACCESS {
             PDPage page = new PDPage(PDRectangle.A4);
             document.addPage(page);
 
-            // Load Arial font (adjust path if needed)
+            // Load fonts
             PDType0Font arial = PDType0Font.load(document, new File("C:/Windows/Fonts/arial.ttf"));
+            PDType0Font arialBold = PDType0Font.load(document, new File("C:/Windows/Fonts/arialbd.ttf"));
 
             PDPageContentStream content = new PDPageContentStream(document, page);
 
             float margin = 50;
             float yStart = 750;
+            float tableWidth = page.getMediaBox().getWidth() - 2 * margin;
+            float rowHeight = 30;
+            int cols = 2;
+            float colWidth = tableWidth / cols;
 
             // Title
-            content.setFont(arial, 14);
+            content.setFont(arialBold, 18);
             content.beginText();
             content.newLineAtOffset(margin, yStart);
-            content.showText("Emergency Access Logs for Patient ID: " + patientId);
+            content.showText("Critical Emergency Data for Patient ID: " + patientId);
             content.endText();
 
-            yStart -= 30;
+            yStart -= 50;
 
-            // Log entries (just line by line, no table)
-            content.setFont(arial, 12);
-            for (String log : logs) {
-                content.beginText();
-                content.newLineAtOffset(margin, yStart);
-                content.showText(log);
-                content.endText();
-                yStart -= 20; // move down for next line
-            }
+            // Draw table without "Emergency Data" section label
+            yStart = drawTable(content, arial, arialBold, margin, yStart, colWidth, rowHeight, logs, "");
 
             content.close();
 
-            // Save into PATIENTDETAILS folder inside your project
-            String folderPath = "PATIENTDETAILS"; 
+            // Save into PATIENTDETAILS folder
+            String folderPath = "PATIENTDETAILS";
             File folder = new File(folderPath);
-            if (!folder.exists()) {
-                folder.mkdirs(); // create folder if missing
-            }
+            if (!folder.exists()) folder.mkdirs();
 
-            String fileName = folderPath + "/logs_" + patientId + ".pdf";
+            String fileName = folderPath + "/INFO_" + patientId + ".pdf";
             document.save(new File(fileName));
-            System.out.println();
-            System.out.println("PDF generated and saved to: " + fileName);
+            System.out.println("PDF generated: " + fileName);
 
             // Auto-open PDF
             File pdfFile = new File(fileName);
@@ -60,8 +56,73 @@ public class EMHASEMERGENCYACCESS {
             }
 
         } catch (IOException e) {
-            System.out.println();
             System.out.println("Error generating PDF: " + e.getMessage());
         }
+    }
+
+    // Helper method to draw a table section
+    private static float drawTable(PDPageContentStream content, PDType0Font arial, PDType0Font arialBold,
+                                   float margin, float yStart, float colWidth, float rowHeight,
+                                   List<String> data, String sectionTitle) throws IOException {
+
+        // Only draw section title if not empty
+        if (sectionTitle != null && !sectionTitle.isEmpty()) {
+            content.setFont(arialBold, 14);
+            content.beginText();
+            content.newLineAtOffset(margin, yStart);
+            content.showText(sectionTitle);
+            content.endText();
+            yStart -= 30;
+        }
+
+        // Headers
+        String[] headers = {"Field", "Value"};
+        content.setFont(arialBold, 16);
+        for (int i = 0; i < headers.length; i++) {
+            String header = headers[i];
+            float textWidth = arialBold.getStringWidth(header) / 1000 * 12; // font size = 12
+            float xOffset = margin + i * colWidth + (colWidth - textWidth) / 2; // center horizontally
+            float yOffset = yStart - 20;
+
+            content.beginText();
+            content.newLineAtOffset(xOffset, yOffset);
+            content.showText(header);
+            content.endText();
+        }
+
+
+        // Draw grid
+        int totalRows = data.size() + 1;
+        for (int i = 0; i <= totalRows; i++) {
+            float y = yStart - i * rowHeight;
+            content.moveTo(margin, y);
+            content.lineTo(margin + colWidth * 2, y);
+        }
+        for (int i = 0; i <= 2; i++) {
+            float x = margin + i * colWidth;
+            content.moveTo(x, yStart);
+            content.lineTo(x, yStart - totalRows * rowHeight);
+        }
+        content.stroke();
+
+        // Fill rows
+        int rowIndex = 1;
+        for (String entry : data) {
+            String[] parts = entry.split(":", 2);
+            for (int i = 0; i < parts.length; i++) {
+                content.beginText();
+                if (i == 0) {
+                    content.setFont(arialBold, 11);
+                } else {
+                    content.setFont(arial, 11);
+                }
+                content.newLineAtOffset(margin + i * colWidth + 10, yStart - rowIndex * rowHeight - 20);
+                content.showText(parts[i].trim());
+                content.endText();
+            }
+            rowIndex++;
+        }
+
+        return yStart - totalRows * rowHeight;
     }
 }

@@ -36,52 +36,87 @@ public class MAINSYSTEM {
         }
     }
 
-    public boolean REGISTER_PATIENT(String patientid, String fname, String lname, String mi, String emergencycontact, String bloodtype,
-        List<String> allergies, List<String> conditions, List<String> medications){
-            try(Connection connection = DATACONNECTION.getConnection()){
-                String INSERTQUERYPATIENT = "INSERT INTO patients (patientid, fname, lname, mi, emergencycontact, bloodtype) VALUES (?, ?, ? ,?, ?, ?)";
-                PreparedStatement preppat = connection.prepareStatement(INSERTQUERYPATIENT);
-                preppat.setString(1, patientid);
-                preppat.setString(2, fname);
-                preppat.setString(3, lname);
-                preppat.setString(4, mi);
-                preppat.setString(5, emergencycontact);
-                preppat.setString(6, bloodtype);
-                preppat.executeUpdate();
+    public boolean REGISTER_PATIENT(String patientid, String fname, String lname, String mi,
+        String dob_month, int dob_day, int dob_year, String gender, int age,
+        String emergencycontact, String bloodtype,
+        String barangay, String city, String province,
+        List<String> allergies, List<String> conditions, List<String> medications,
+        List<String> familyhistory, List<String> immunization) {
 
-                String INSERTQUERYALLERGIES = "INSERT INTO patient_allergies (patientid, allergies) VALUES (?, ?)";
-                PreparedStatement prepallergy = connection.prepareStatement(INSERTQUERYALLERGIES);
-                for (String allergy : allergies){
-                    prepallergy.setString(1, patientid);
-                    prepallergy.setString(2, allergy); 
-                    prepallergy.executeUpdate();
-                }
-                
+        try (Connection connection = DATACONNECTION.getConnection()) {
+            // Insert patient core info
+            String INSERTQUERYPATIENT =
+                "INSERT INTO patients (patientid, fname, lname, mi, gender, age, emergencycontact, bloodtype, dob_month, dob_day, dob_year, barangay, city, province) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+            PreparedStatement preppat = connection.prepareStatement(INSERTQUERYPATIENT);
+            preppat.setString(1, patientid);
+            preppat.setString(2, fname);
+            preppat.setString(3, lname);
+            preppat.setString(4, mi);
+            preppat.setString(5, gender);
+            preppat.setInt(6, age);
+            preppat.setString(7, emergencycontact);
+            preppat.setString(8, bloodtype);
+            preppat.setString(9, dob_month);
+            preppat.setInt(10, dob_day);
+            preppat.setInt(11, dob_year);
+            preppat.setString(12, barangay);
+            preppat.setString(13, city);
+            preppat.setString(14, province);
+            preppat.executeUpdate();
 
-                String INSERTQUERYCONDITIONS = "INSERT INTO patient_conditions (patientid, conditions) VALUES (?, ?)";
-                PreparedStatement prepcondition = connection.prepareStatement(INSERTQUERYCONDITIONS);
-                for (String condition : conditions){
-                    prepcondition.setString(1, patientid);
-                    prepcondition.setString(2, condition); 
-                    prepcondition.executeUpdate();
-                }
-
-                String INSERTQUERYMEDICATIONS = "INSERT INTO patient_medications (patientid, medications) VALUES (?, ?)";
-                PreparedStatement prepmedication = connection.prepareStatement(INSERTQUERYMEDICATIONS);
-                for (String medication : medications){
-                    prepmedication.setString(1, patientid);
-                    prepmedication.setString(2, medication); 
-                    prepmedication.executeUpdate();
-                }
-                return true;
-                
-            } catch (SQLException e){
-                System.out.println();
-                System.out.println("Error registring patient: " + e.getMessage());
-                return false;
+            // Allergies
+            String INSERTQUERYALLERGIES = "INSERT INTO patient_allergies (patientid, allergies) VALUES (?, ?)";
+            PreparedStatement prepallergy = connection.prepareStatement(INSERTQUERYALLERGIES);
+            for (String allergy : allergies) {
+                prepallergy.setString(1, patientid);
+                prepallergy.setString(2, allergy);
+                prepallergy.executeUpdate();
             }
+
+            // Conditions
+            String INSERTQUERYCONDITIONS = "INSERT INTO patient_conditions (patientid, conditions) VALUES (?, ?)";
+            PreparedStatement prepcondition = connection.prepareStatement(INSERTQUERYCONDITIONS);
+            for (String condition : conditions) {
+                prepcondition.setString(1, patientid);
+                prepcondition.setString(2, condition);
+                prepcondition.executeUpdate();
+            }
+
+            // Medications
+            String INSERTQUERYMEDICATIONS = "INSERT INTO patient_medications (patientid, medications) VALUES (?, ?)";
+            PreparedStatement prepmedication = connection.prepareStatement(INSERTQUERYMEDICATIONS);
+            for (String medication : medications) {
+                prepmedication.setString(1, patientid);
+                prepmedication.setString(2, medication);
+                prepmedication.executeUpdate();
+            }
+
+            // Family Medical History (list)
+            String INSERTQUERYFAMILY = "INSERT INTO patient_family_history (patientid, pedigree) VALUES (?, ?)";
+            PreparedStatement prepfamily = connection.prepareStatement(INSERTQUERYFAMILY);
+            for (String pedigree : familyhistory) {
+                prepfamily.setString(1, patientid);
+                prepfamily.setString(2, pedigree);
+                prepfamily.executeUpdate();
+            }
+
+            // Immunizations (list)
+            String INSERTQUERYIMMUNIZATION = "INSERT INTO patient_immunizations (patientid, vaccine) VALUES (?, ?)";
+            PreparedStatement prepimmunization = connection.prepareStatement(INSERTQUERYIMMUNIZATION);
+            for (String vaccine : immunization) {
+                prepimmunization.setString(1, patientid);
+                prepimmunization.setString(2, vaccine);
+                prepimmunization.executeUpdate();
+            }
+
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error registering patient: " + e.getMessage());
+            return false;
         }
+    }
 
     public boolean REGISTER_USER(String fname, String lname, String mi, String profession, String username, String password){
         String table = "";
@@ -119,15 +154,22 @@ public class MAINSYSTEM {
 
     public List<String> ACCESS_EMERGENCY(String patientId) {
         List<String> logs = new ArrayList<>();
-        try(Connection connection = DATACONNECTION.getConnection()) {
-            
-            // Patient core info
+        try (Connection connection = DATACONNECTION.getConnection()) {
+
+            // Patient core info (only fullname, blood type, emergency contact)
             String patientQuery = "SELECT fname, lname, mi, bloodtype, emergencycontact FROM patients WHERE patientid = ?";
             PreparedStatement stmt = connection.prepareStatement(patientQuery);
             stmt.setString(1, patientId);
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-                logs.add("Patient: " + rs.getString("fname") + " " + rs.getString("mi") + " " + rs.getString("lname"));
+            if (rs.next()) {
+                String mi = rs.getString("mi");
+                if (mi != null && !mi.isEmpty()) {
+                    mi = mi + ".";
+                } else {
+                    mi = "";
+                }
+
+                logs.add("Patient: " + rs.getString("fname") + " " + mi + " " + rs.getString("lname"));
                 logs.add("Blood Type: " + rs.getString("bloodtype"));
                 logs.add("Emergency Contact: " + rs.getString("emergencycontact"));
             }
@@ -138,7 +180,7 @@ public class MAINSYSTEM {
             stmt.setString(1, patientId);
             rs = stmt.executeQuery();
             List<String> allergies = new ArrayList<>();
-            while(rs.next()) allergies.add(rs.getString("allergies"));
+            while (rs.next()) allergies.add(rs.getString("allergies"));
             logs.add("Allergies: " + String.join(", ", allergies));
 
             // Conditions
@@ -147,7 +189,7 @@ public class MAINSYSTEM {
             stmt.setString(1, patientId);
             rs = stmt.executeQuery();
             List<String> conditions = new ArrayList<>();
-            while(rs.next()) conditions.add(rs.getString("conditions"));
+            while (rs.next()) conditions.add(rs.getString("conditions"));
             logs.add("Conditions: " + String.join(", ", conditions));
 
             // Medications
@@ -156,14 +198,36 @@ public class MAINSYSTEM {
             stmt.setString(1, patientId);
             rs = stmt.executeQuery();
             List<String> medications = new ArrayList<>();
-            while(rs.next()) medications.add(rs.getString("medications"));
+            while (rs.next()) medications.add(rs.getString("medications"));
             logs.add("Medications: " + String.join(", ", medications));
 
-        } catch(Exception e) {
+            // Family Medical History
+            String familyQuery = "SELECT pedigree FROM patient_family_history WHERE patientid = ?";
+            stmt = connection.prepareStatement(familyQuery);
+            stmt.setString(1, patientId);
+            rs = stmt.executeQuery();
+            List<String> familyHistory = new ArrayList<>();
+            while (rs.next()) familyHistory.add(rs.getString("pedigree"));
+            logs.add("Family Medical History: " + String.join(", ", familyHistory));
+
+            // Immunizations
+            String immunizationQuery = "SELECT vaccine FROM patient_immunizations WHERE patientid = ?";
+            stmt = connection.prepareStatement(immunizationQuery);
+            stmt.setString(1, patientId);
+            rs = stmt.executeQuery();
+            List<String> immunizations = new ArrayList<>();
+            while (rs.next()) immunizations.add(rs.getString("vaccine"));
+            logs.add("Immunizations: " + String.join(", ", immunizations));
+
+        } catch (Exception e) {
             System.out.println("Error fetching patient logs: " + e.getMessage());
         }
         return logs;
     }
+
+
+
+
 
     public void LOG_ACCESS(String fullname, String profession, String patientId, String action) {
         String query = "INSERT INTO access_logs (fullname, profession, patientid, action) VALUES (?, ?, ?, ?)";
@@ -221,7 +285,7 @@ public class MAINSYSTEM {
         if (profession.equals("Paramedic")) table = "paramedics";
         else if (profession.equals("ER Nurse")) table = "er_nurses";
         else if (profession.equals("ER Physician")) table = "emergency_physicians";
-        else if (profession.equals("Medical Technician")) table = "medical_technicians"; // <-- fix here
+        else if (profession.equals("Medical Technician")) table = "emergency_medical_technicians"; 
         else if (profession.equals("Admin")) table = "admin";
 
         String query = "SELECT fname, mi, lname FROM " + table + " WHERE username = ?";
@@ -241,13 +305,53 @@ public class MAINSYSTEM {
                 }
             }
         } catch(SQLException e){
-            System.out.println("Error fetching full name: " + e.getMessage());
+            System.out.println();
         }
         return fullName;
     }
 
 
+    public List<String> SEARCH_PATIENT(String patientid){
+        List<String> logs = new ArrayList<>();
+        try (Connection connection = DATACONNECTION.getConnection()){
+
+           String SEARCHQUERYPATIENT = "SELECT fname, lname, mi, dob_month, dob_day, dob_year, age, gender, " +
+               "bloodtype, emergencycontact, barangay, city, province " +
+               "FROM patients WHERE patientid = ?";
+
+            PreparedStatement prepsearch = connection.prepareStatement(SEARCHQUERYPATIENT);
+            prepsearch.setString(1, patientid);
+            ResultSet rs = prepsearch.executeQuery();
+
+            if (rs.next()) {
+                String mi = rs.getString("mi");
+                if (mi != null && !mi.isEmpty()) {
+                    mi = mi + ".";
+                } else {
+                    mi = "";
+                }
+
+                logs.add("Patiend ID: " + patientid);
+                logs.add("Name: " + rs.getString("fname") + " " + mi + " " + rs.getString("lname"));
+                logs.add("Date of Birth: " + rs.getString("dob_month") + " " + rs.getInt("dob_day") + ", " + 
+                        rs.getInt("dob_year"));
+                logs.add("Age: " + rs.getInt("age"));
+                logs.add("Gender: " + rs.getString("gender"));
+                logs.add("Blood Type: " + rs.getString("bloodtype"));
+                logs.add("Emergency Contact: " + rs.getString("emergencycontact"));
+                logs.add("Address: " + "Brgy. " + rs.getString("barangay") + ", " + rs.getString("city") + " City"
+                        + ", " + rs.getString("province"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error fetching patient details: " + e.getMessage());
+        }
+        return logs;
+    }
 }
+                        
+   
+                        
 
 
 
