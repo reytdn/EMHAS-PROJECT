@@ -152,14 +152,14 @@ public class MAINSYSTEM {
         }
     }
 
-    public List<String> ACCESS_EMERGENCY(String patientId) {
+    public List<String> ACCESS_EMERGENCY(String patientid) {
         List<String> logs = new ArrayList<>();
         try (Connection connection = DATACONNECTION.getConnection()) {
 
             // Patient core info (only fullname, blood type, emergency contact)
             String patientQuery = "SELECT fname, lname, mi, bloodtype, emergencycontact FROM patients WHERE patientid = ?";
             PreparedStatement stmt = connection.prepareStatement(patientQuery);
-            stmt.setString(1, patientId);
+            stmt.setString(1, patientid);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 String mi = rs.getString("mi");
@@ -177,7 +177,7 @@ public class MAINSYSTEM {
             // Allergies
             String allergyQuery = "SELECT allergies FROM patient_allergies WHERE patientid = ?";
             stmt = connection.prepareStatement(allergyQuery);
-            stmt.setString(1, patientId);
+            stmt.setString(1, patientid);
             rs = stmt.executeQuery();
             List<String> allergies = new ArrayList<>();
             while (rs.next()) allergies.add(rs.getString("allergies"));
@@ -186,7 +186,7 @@ public class MAINSYSTEM {
             // Conditions
             String conditionQuery = "SELECT conditions FROM patient_conditions WHERE patientid = ?";
             stmt = connection.prepareStatement(conditionQuery);
-            stmt.setString(1, patientId);
+            stmt.setString(1, patientid);
             rs = stmt.executeQuery();
             List<String> conditions = new ArrayList<>();
             while (rs.next()) conditions.add(rs.getString("conditions"));
@@ -195,7 +195,7 @@ public class MAINSYSTEM {
             // Medications
             String medicationQuery = "SELECT medications FROM patient_medications WHERE patientid = ?";
             stmt = connection.prepareStatement(medicationQuery);
-            stmt.setString(1, patientId);
+            stmt.setString(1, patientid);
             rs = stmt.executeQuery();
             List<String> medications = new ArrayList<>();
             while (rs.next()) medications.add(rs.getString("medications"));
@@ -204,7 +204,7 @@ public class MAINSYSTEM {
             // Family Medical History
             String familyQuery = "SELECT pedigree FROM patient_family_history WHERE patientid = ?";
             stmt = connection.prepareStatement(familyQuery);
-            stmt.setString(1, patientId);
+            stmt.setString(1, patientid);
             rs = stmt.executeQuery();
             List<String> familyHistory = new ArrayList<>();
             while (rs.next()) familyHistory.add(rs.getString("pedigree"));
@@ -213,7 +213,7 @@ public class MAINSYSTEM {
             // Immunizations
             String immunizationQuery = "SELECT vaccine FROM patient_immunizations WHERE patientid = ?";
             stmt = connection.prepareStatement(immunizationQuery);
-            stmt.setString(1, patientId);
+            stmt.setString(1, patientid);
             rs = stmt.executeQuery();
             List<String> immunizations = new ArrayList<>();
             while (rs.next()) immunizations.add(rs.getString("vaccine"));
@@ -348,9 +348,464 @@ public class MAINSYSTEM {
         }
         return logs;
     }
+    // Update patient name
+    public boolean UPDATE_NAME(String patientId, String fname, String mi, String lname) {
+        String query = "UPDATE patients SET fname = ?, mi = ?, lname = ? WHERE patientid = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, fname);
+            stmt.setString(2, mi);
+            stmt.setString(3, lname);
+            stmt.setString(4, patientId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating name: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Update patient address
+    public boolean UPDATE_ADDRESS(String patientId, String barangay, String city, String province) {
+        String query = "UPDATE patients SET barangay = ?, city = ?, province = ? WHERE patientid = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, barangay);
+            stmt.setString(2, city);
+            stmt.setString(3, province);
+            stmt.setString(4, patientId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating address: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Update patient birthdate
+    public boolean UPDATE_BIRTHDATE(String patientId, String month, int day, int year) {
+        String query = "UPDATE patients SET dob_month = ?, dob_day = ?, dob_year = ? WHERE patientid = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, month);
+            stmt.setInt(2, day);
+            stmt.setInt(3, year);
+            stmt.setString(4, patientId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating birthdate: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Update patient blood type
+    public boolean UPDATE_BLOODTYPE(String patientId, String bloodType) {
+        String query = "UPDATE patients SET bloodtype = ? WHERE patientid = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, bloodType);
+            stmt.setString(2, patientId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating blood type: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Update patient age
+    public boolean UPDATE_AGE(String patientId, int age) {
+        String query = "UPDATE patients SET age = ? WHERE patientid = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, age);
+            stmt.setString(2, patientId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating age: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Update emergency contact
+    public boolean UPDATE_EMERGENCYCONTACT(String patientId, String contact) {
+        String query = "UPDATE patients SET emergencycontact = ? WHERE patientid = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, contact);
+            stmt.setString(2, patientId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating emergency contact: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Update allergies (replace old with new)
+    public boolean UPDATE_ALLERGIES(String patientId, String allergy) {
+        String deleteQuery = "DELETE FROM patient_allergies WHERE patientid = ?";
+        String insertQuery = "INSERT INTO patient_allergies (patientid, allergies) VALUES (?, ?)";
+        try (Connection connection = DATACONNECTION.getConnection()) {
+            PreparedStatement del = connection.prepareStatement(deleteQuery);
+            del.setString(1, patientId);
+            del.executeUpdate();
+
+            PreparedStatement ins = connection.prepareStatement(insertQuery);
+            ins.setString(1, patientId);
+            ins.setString(2, allergy);
+            return ins.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating allergies: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Update conditions
+    public boolean UPDATE_CONDITIONS(String patientId, String condition) {
+        String deleteQuery = "DELETE FROM patient_conditions WHERE patientid = ?";
+        String insertQuery = "INSERT INTO patient_conditions (patientid, conditions) VALUES (?, ?)";
+        try (Connection connection = DATACONNECTION.getConnection()) {
+            PreparedStatement del = connection.prepareStatement(deleteQuery);
+            del.setString(1, patientId);
+            del.executeUpdate();
+
+            PreparedStatement ins = connection.prepareStatement(insertQuery);
+            ins.setString(1, patientId);
+            ins.setString(2, condition);
+            return ins.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating conditions: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Update medications
+    public boolean UPDATE_MEDICATIONS(String patientId, String medication) {
+        String deleteQuery = "DELETE FROM patient_medications WHERE patientid = ?";
+        String insertQuery = "INSERT INTO patient_medications (patientid, medications) VALUES (?, ?)";
+        try (Connection connection = DATACONNECTION.getConnection()) {
+            PreparedStatement del = connection.prepareStatement(deleteQuery);
+            del.setString(1, patientId);
+            del.executeUpdate();
+
+            PreparedStatement ins = connection.prepareStatement(insertQuery);
+            ins.setString(1, patientId);
+            ins.setString(2, medication);
+            return ins.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating medications: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Update pedigree (family medical history)
+    public boolean UPDATE_PEDIGREE(String patientId, String pedigree) {
+        String deleteQuery = "DELETE FROM patient_family_history WHERE patientid = ?";
+        String insertQuery = "INSERT INTO patient_family_history (patientid, pedigree) VALUES (?, ?)";
+        try (Connection connection = DATACONNECTION.getConnection()) {
+            PreparedStatement del = connection.prepareStatement(deleteQuery);
+            del.setString(1, patientId);
+            del.executeUpdate();
+
+            PreparedStatement ins = connection.prepareStatement(insertQuery);
+            ins.setString(1, patientId);
+            ins.setString(2, pedigree);
+            return ins.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating pedigree: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Update immunizations
+    public boolean UPDATE_IMMUNIZATIONS(String patientId, String vaccine) {
+        String deleteQuery = "DELETE FROM patient_immunizations WHERE patientid = ?";
+        String insertQuery = "INSERT INTO patient_immunizations (patientid, vaccine) VALUES (?, ?)";
+        try (Connection connection = DATACONNECTION.getConnection()) {
+            PreparedStatement del = connection.prepareStatement(deleteQuery);
+            del.setString(1, patientId);
+            del.executeUpdate();
+
+            PreparedStatement ins = connection.prepareStatement(insertQuery);
+            ins.setString(1, patientId);
+            ins.setString(2, vaccine);
+            return ins.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating immunizations: " + e.getMessage());
+            return false;
+        }
+    }        
+    public List<String> GET_ALLERGIES(String patientId) {
+        List<String> allergies = new ArrayList<>();
+        String query = "SELECT allergies FROM patient_allergies WHERE patientid = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, patientId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                allergies.add(rs.getString("allergies"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching allergies: " + e.getMessage());
+        }
+        return allergies;
+    }
+
+    public boolean UPDATE_SPECIFIC_ALLERGY(String patientId, String oldAllergy, String newAllergy) {
+        String query = "UPDATE patient_allergies SET allergies = ? WHERE patientid = ? AND allergies = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, newAllergy);
+            stmt.setString(2, patientId);
+            stmt.setString(3, oldAllergy);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating allergy: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Get all conditions
+    public List<String> GET_CONDITIONS(String patientId) {
+        List<String> conditions = new ArrayList<>();
+        String query = "SELECT conditions FROM patient_conditions WHERE patientid = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, patientId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                conditions.add(rs.getString("conditions"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching conditions: " + e.getMessage());
+        }
+        return conditions;
+    }
+
+    public boolean UPDATE_SPECIFIC_CONDITION(String patientId, String oldCondition, String newCondition) {
+        String query = "UPDATE patient_conditions SET conditions = ? WHERE patientid = ? AND conditions = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, newCondition);
+            stmt.setString(2, patientId);
+            stmt.setString(3, oldCondition);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating condition: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Get all medications
+    public List<String> GET_MEDICATIONS(String patientId) {
+        List<String> medications = new ArrayList<>();
+        String query = "SELECT medications FROM patient_medications WHERE patientid = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, patientId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                medications.add(rs.getString("medications"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching medications: " + e.getMessage());
+        }
+        return medications;
+    }
+
+    public boolean UPDATE_SPECIFIC_MEDICATION(String patientId, String oldMed, String newMed) {
+        String query = "UPDATE patient_medications SET medications = ? WHERE patientid = ? AND medications = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, newMed);
+            stmt.setString(2, patientId);
+            stmt.setString(3, oldMed);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating medication: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Get all pedigree entries
+    public List<String> GET_PEDIGREE(String patientId) {
+        List<String> pedigree = new ArrayList<>();
+        String query = "SELECT pedigree FROM patient_family_history WHERE patientid = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, patientId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                pedigree.add(rs.getString("pedigree"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching pedigree: " + e.getMessage());
+        }
+        return pedigree;
+    }
+
+    public boolean UPDATE_SPECIFIC_PEDIGREE(String patientId, String oldPedigree, String newPedigree) {
+        String query = "UPDATE patient_family_history SET pedigree = ? WHERE patientid = ? AND pedigree = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, newPedigree);
+            stmt.setString(2, patientId);
+            stmt.setString(3, oldPedigree);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating pedigree: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Get all immunizations
+    public List<String> GET_IMMUNIZATIONS(String patientId) {
+        List<String> immunizations = new ArrayList<>();
+        String query = "SELECT vaccine FROM patient_immunizations WHERE patientid = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, patientId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                immunizations.add(rs.getString("vaccine"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching immunizations: " + e.getMessage());
+        }
+        return immunizations;
+    }
+
+    public boolean UPDATE_SPECIFIC_IMMUNIZATION(String patientId, String oldImmunization, String newImmunization) {
+        String query = "UPDATE patient_immunizations SET vaccine = ? WHERE patientid = ? AND vaccine = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, newImmunization);
+            stmt.setString(2, patientId);
+            stmt.setString(3, oldImmunization);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating immunization: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public void DELETE_ALLERGY(String patientId, String allergy) {
+        try (Connection conn = DATACONNECTION.getConnection()) {
+            String sql = "DELETE FROM patient_allergies WHERE patientid = ? AND allergies = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, patientId);
+            stmt.setString(2, allergy);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error deleting allergy: " + e.getMessage());
+        }
+    }
+
+    public void DELETE_CONDITION(String patientId, String condition) {
+        try (Connection conn = DATACONNECTION.getConnection()) {
+            String sql = "DELETE FROM patient_conditions WHERE patientid = ? AND conditions = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, patientId);
+            stmt.setString(2, condition);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error deleting condition: " + e.getMessage());
+        }
+    }
+
+    public void DELETE_MEDICATION(String patientId, String medication) {
+        try (Connection conn = DATACONNECTION.getConnection()) {
+            String sql = "DELETE FROM patient_medications WHERE patientid = ? AND medications = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, patientId);
+            stmt.setString(2, medication);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error deleting medication: " + e.getMessage());
+        }
+    }
+
+    public void DELETE_FAMILY_HISTORY(String patientId, String pedigree) {
+        try (Connection conn = DATACONNECTION.getConnection()) {
+            String sql = "DELETE FROM patient_family_history WHERE patientid = ? AND pedigree = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, patientId);
+            stmt.setString(2, pedigree);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error deleting family history: " + e.getMessage());
+        }
+    }
+
+    public void DELETE_IMMUNIZATION(String patientId, String vaccine) {
+        try (Connection conn = DATACONNECTION.getConnection()) {
+            String sql = "DELETE FROM patient_immunizations WHERE patientid = ? AND vaccine = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, patientId);
+            stmt.setString(2, vaccine);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error deleting immunization: " + e.getMessage());
+        }
+    }
+
+    public void ADD_ALLERGY(String patientId, String allergy) {
+        try (Connection conn = DATACONNECTION.getConnection()) {
+            String sql = "INSERT INTO patient_allergies (patientid, allergies) VALUES (?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, patientId);
+            stmt.setString(2, allergy);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error adding allergy: " + e.getMessage());
+        }
+    }
+
+    public void ADD_CONDITION(String patientId, String condition) {
+        try (Connection conn = DATACONNECTION.getConnection()) {
+            String sql = "INSERT INTO patient_conditions (patientid, conditions) VALUES (?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, patientId);
+            stmt.setString(2, condition);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error adding condition: " + e.getMessage());
+        }
+    }
+
+    public void ADD_MEDICATION(String patientId, String medication) {
+        try (Connection conn = DATACONNECTION.getConnection()) {
+            String sql = "INSERT INTO patient_medications (patientid, medications) VALUES (?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, patientId);
+            stmt.setString(2, medication);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error adding medication: " + e.getMessage());
+        }
+    }
+
+    public void ADD_FAMILY_HISTORY(String patientId, String pedigree) {
+        try (Connection conn = DATACONNECTION.getConnection()) {
+            String sql = "INSERT INTO patient_family_history (patientid, pedigree) VALUES (?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, patientId);
+            stmt.setString(2, pedigree);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error adding family history: " + e.getMessage());
+        }
+    }
+
+    public void ADD_IMMUNIZATION(String patientId, String vaccine) {
+        try (Connection conn = DATACONNECTION.getConnection()) {
+            String sql = "INSERT INTO patient_immunizations (patientid, vaccine) VALUES (?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, patientId);
+            stmt.setString(2, vaccine);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error adding immunization: " + e.getMessage());
+        }
+    }
 }
-                        
-   
                         
 
 

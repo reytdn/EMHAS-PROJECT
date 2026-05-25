@@ -38,7 +38,8 @@ public class EMHASAPP {
                 }
 
                 else if (Option == 3){
-                    // future edit patient record logic
+                    EMHASEDITPATIENT editpatient = new EMHASEDITPATIENT(mainsystem, INPUT);
+                    editpatient.EDITPATIENT();
                 }
 
                 else if (Option == 4) {
@@ -114,7 +115,8 @@ public class EMHASAPP {
                 }
 
                 else if (Option == 3){
-                    // future edit patient record logic
+                    EMHASEDITPATIENT editpatient = new EMHASEDITPATIENT(mainsystem, INPUT);
+                    editpatient.EDITPATIENT();
                 }
 
                 else if (Option == 4) {

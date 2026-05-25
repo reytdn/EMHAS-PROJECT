@@ -50,3 +50,38 @@ public class DATACONNECTION {
     //4. Back To EMHAS Menu System
 
 }
+
+
+
+
+//1. Add Invoice
+//2. Pay Invoice
+
+//Choice: 2
+//Enter Name: JUAN 
+
+//JUAN | PAID:     | INVOICE #1 BALANCE: 1000
+//JUAN | PAID:     | INVOICE #2 BALANCE: 2000
+//JUAN | PAID:     | INVOICE #3 BALANCE: 3000
+
+//Enter Amount to pay: 2000
+
+//1. Add Invoice
+//2. Pay Invoice
+
+//Choice: 2
+//Enter Name: JUAN 
+
+//JUAN | PAID: 1000| INVOICE #2 BALANCE: 1000
+//JUAN | PAID:     | INVOICE #3 BALANCE: 3000
+
+//Enter Amount to pay: 2500
+
+//1. Add Invoice
+//2. Pay Invoice
+
+//Choice: 2
+//Enter Name: JUAN 
+
+
+//JUAN | PAID: 1500| INVOICE #3 BALANCE: 1500
