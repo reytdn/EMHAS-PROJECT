@@ -225,6 +225,53 @@ public class MAINSYSTEM {
         return logs;
     }
 
+    public boolean IS_PATIENT_REGISTERED(String patientId) {
+        try (Connection connection = DATACONNECTION.getConnection();
+            PreparedStatement prepcheck = connection.prepareStatement("SELECT COUNT(*) FROM patients WHERE patientid = ?")) {
+            prepcheck.setString(1, patientId);
+            ResultSet rs = prepcheck.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking patient ID: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public void SHOW_PATIENTS() {
+        try(Connection connection =DATACONNECTION.getConnection()) {
+        String query = "SELECT patientid, fname, lname FROM patients ORDER BY lname ASC";
+        PreparedStatement stmt = connection.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+
+        System.out.println();
+        System.out.println("========================================");
+        System.out.println("|         REGISTERED PATIENTS          |");
+        System.out.println("========================================");
+
+        int count = 1;
+
+        while(rs.next()) {
+
+            String patientid = rs.getString("patientid");
+            String fullname = rs.getString("lname") + ", " + rs.getString("fname");
+            System.out.println( count + ". " + patientid + " - " +fullname);
+            count++;
+        }
+
+        if(count == 1) {
+            System.out.println("No Registered Patients.");
+        }
+
+        System.out.println("========================================");
+
+        } catch(SQLException e) {
+
+            System.out.println();
+            System.out.println("Error Loading Patients: " + e.getMessage());
+        }
+    }
 
 
 

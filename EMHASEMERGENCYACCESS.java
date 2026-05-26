@@ -1,6 +1,7 @@
 import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,16 +27,24 @@ public class EMHASEMERGENCYACCESS {
             int cols = 2;
             float colWidth = tableWidth / cols;
 
-            // Title
+            // ✅ Add MediRush logo (upper left)
+            PDImageXObject mediRushLogo = PDImageXObject.createFromFile("MEDIRUSHLOGO.jpg", document);
+            content.drawImage(mediRushLogo, margin, page.getMediaBox().getHeight() - 100, 80, 80);
+
+            // ✅ Add DOH logo (upper right)
+            PDImageXObject dohLogo = PDImageXObject.createFromFile("DOHLOGO.png", document);
+            content.drawImage(dohLogo, page.getMediaBox().getWidth() - margin - 80, page.getMediaBox().getHeight() - 100, 80, 80);
+
+            // Title (shifted down so it doesn’t overlap logos)
             content.setFont(arialBold, 18);
             content.beginText();
-            content.newLineAtOffset(margin, yStart);
-            content.showText("Critical Emergency Data for Patient ID: " + patientId);
+            content.newLineAtOffset(margin, yStart - 50);
+            content.showText("         Critical Emergency Data for Patient ID: " + patientId);
             content.endText();
 
-            yStart -= 50;
+            yStart -= 70;
 
-            // Draw table without "Emergency Data" section label
+            // Draw table
             yStart = drawTable(content, arial, arialBold, margin, yStart, colWidth, rowHeight, logs, "");
 
             content.close();
@@ -65,7 +74,6 @@ public class EMHASEMERGENCYACCESS {
                                    float margin, float yStart, float colWidth, float rowHeight,
                                    List<String> data, String sectionTitle) throws IOException {
 
-        // Only draw section title if not empty
         if (sectionTitle != null && !sectionTitle.isEmpty()) {
             content.setFont(arialBold, 14);
             content.beginText();
@@ -80,8 +88,8 @@ public class EMHASEMERGENCYACCESS {
         content.setFont(arialBold, 16);
         for (int i = 0; i < headers.length; i++) {
             String header = headers[i];
-            float textWidth = arialBold.getStringWidth(header) / 1000 * 12; // font size = 12
-            float xOffset = margin + i * colWidth + (colWidth - textWidth) / 2; // center horizontally
+            float textWidth = arialBold.getStringWidth(header) / 1000 * 12;
+            float xOffset = margin + i * colWidth + (colWidth - textWidth) / 2;
             float yOffset = yStart - 20;
 
             content.beginText();
@@ -89,7 +97,6 @@ public class EMHASEMERGENCYACCESS {
             content.showText(header);
             content.endText();
         }
-
 
         // Draw grid
         int totalRows = data.size() + 1;

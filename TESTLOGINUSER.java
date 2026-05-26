@@ -33,14 +33,14 @@ public class TESTLOGINUSER {
         System.out.println("========================================");
         System.out.println();
 
-        int Option;
+        int Option = -1;
         try {
-            System.out.print("Select Option: ");
+            System.out.print("Choose Option: ");
             Option = Integer.parseInt(INPUT.nextLine());
         } catch (NumberFormatException e) {
             System.out.println();
-            System.out.println("Invalid input! Please enter numbers only (1-4).");
-            return false; // back to main menu
+            System.out.println("Invalid Choice. Choose Options 1-4 Only.");
+            return false;
         }
 
         // sets the profession based on the user's selection
@@ -77,7 +77,7 @@ public class TESTLOGINUSER {
                 loggedInFullName = mainsystem.GET_FULLNAME(username, profession);
                 loggedInUserProfession = profession;
 
-                System.out.println(" ---- Welcome " + loggedInFullName + "! ----");
+                System.out.println("Welcome " + loggedInFullName + "!");
                 VALID = true;
 
                 loggedInFullName = mainsystem.GET_FULLNAME(username, profession);

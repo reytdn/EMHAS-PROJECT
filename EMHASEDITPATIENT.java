@@ -10,12 +10,12 @@ public class EMHASEDITPATIENT {
         this.INPUT = INPUT;
     }
         
-    public void EDITPATIENT() {
+    public String EDITPATIENT() {
         System.out.println();
         System.out.print("Enter Patient ID to Edit: ");
         String patientId = INPUT.nextLine();
+
         while (true) {
-            
             System.out.println();
             System.out.println("========================================");
             System.out.println("|          EMHAS EDIT CHOICES          |");
@@ -26,8 +26,29 @@ public class EMHASEDITPATIENT {
             System.out.println("| 4. Back To Main Menu                 |");
             System.out.println("========================================");
             System.out.println();
-            System.out.print("Choose Option: ");
-            int option = INPUT.nextInt();
+
+            int option = -1;
+            boolean validInput = false;
+
+            // Error trap loop
+            while (!validInput) {
+                System.out.print("Choose Option: ");
+                try {
+                    option = INPUT.nextInt();
+                    INPUT.nextLine(); // clear buffer
+
+                    if (option >= 1 && option <= 4) {
+                        validInput = true; // valid choice
+                    } else {
+                        System.out.println();
+                        System.out.println("Invalid Choice. Please enter numbers 1-4 only.");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println();
+                    System.out.println("Invalid Choice. Please enter numbers 1-4 only.");
+                    INPUT.nextLine(); // clear invalid input
+                }
+            }
 
             if (option == 1) {
                 while (true) {
@@ -74,39 +95,93 @@ public class EMHASEDITPATIENT {
 
                     System.out.println();
                     System.out.println("Current " + type + "s:");
-                    System.out.println("--------------------------------");
+                    System.out.println("=======================");
                     if (list.isEmpty()) {
-                        System.out.println("No records found.");
+                        System.out.println("No Records Found.");
                     } else {
                         for (int i = 0; i < list.size(); i++) {
                             System.out.println((i + 1) + ". " + list.get(i));
                         }
+                        System.out.println("=======================");
                     }
 
                     // Now add new entry
                     if (addchoice == 1) {
+                        System.out.println();
                         System.out.print("Input New Allergy: ");
-                        String allergy = INPUT.nextLine();
+
+                        String allergy = INPUT.nextLine().trim();
+
+                        if(allergy.isEmpty()){
+                            System.out.println();
+                            System.out.println("Allergy Cannot Be Empty.");
+                            continue;
+                        }
+
                         mainsystem.ADD_ALLERGY(patientId, allergy);
+
                     } else if (addchoice == 2) {
+                        System.out.println();
                         System.out.print("Input New Condition: ");
-                        String condition = INPUT.nextLine();
+
+                        String condition = INPUT.nextLine().trim();
+
+                        if(condition.isEmpty()){
+                            System.out.println();
+                            System.out.println("Condition Cannot Be Empty.");
+                            continue;
+                        }
+
                         mainsystem.ADD_CONDITION(patientId, condition);
+
                     } else if (addchoice == 3) {
+                        System.out.println();
                         System.out.print("Input New Medication: ");
-                        String medication = INPUT.nextLine();
+
+                        String medication = INPUT.nextLine().trim();
+
+                        if(medication.isEmpty()){
+                            System.out.println();
+                            System.out.println("Medication Cannot Be Empty.");
+                            continue;
+                        }
+
                         mainsystem.ADD_MEDICATION(patientId, medication);
+
                     } else if (addchoice == 4) {
+                        System.out.println();
                         System.out.print("Input New Family Medical History: ");
-                        String history = INPUT.nextLine();
+
+                        String history = INPUT.nextLine().trim();
+
+                        if(history.isEmpty()){
+                            System.out.println();
+                            System.out.println("Family Medical History Cannot Be Empty.");
+                            continue;
+                        }
+
                         mainsystem.ADD_FAMILY_HISTORY(patientId, history);
+
                     } else if (addchoice == 5) {
+                        System.out.println();
                         System.out.print("Input New Immunization: ");
-                        String vaccine = INPUT.nextLine();
+
+                        String vaccine = INPUT.nextLine().trim();
+
+                        if(vaccine.isEmpty()){
+                            System.out.println();
+                            System.out.println("Immunization Cannot Be Empty.");
+                            continue;
+                        }
+
                         mainsystem.ADD_IMMUNIZATION(patientId, vaccine);
                     }
-                    System.out.println("Successfully Added!");
+
+                System.out.println();
+                System.out.println("Successfully Added!");
                 }
+            
+
 
             } else if (option == 2) {
                 while (true) {
@@ -122,9 +197,28 @@ public class EMHASEDITPATIENT {
                     System.out.println("| 6. Back To EMHAS Edit Choices        |");
                     System.out.println("========================================");
                     System.out.println();
-                    System.out.print("Choose Category: ");
-                    int deletechoice = INPUT.nextInt();
-                    INPUT.nextLine();
+                    int deletechoice = -1;
+
+                    // Error trap loop
+                    while (true) {
+                        System.out.print("Choose Option: ");
+                        try {
+                            deletechoice = INPUT.nextInt();
+                            INPUT.nextLine(); // clear buffer
+
+                            if (deletechoice >= 1 && deletechoice <= 6) {
+                                break; // valid input, exit loop
+                            } else {
+                                System.out.println();
+                                System.out.println("Invalid Choice. Please enter numbers 1-6 only.");
+                            }
+                        } catch (InputMismatchException e) {
+                            System.out.println();
+                            System.out.println("Invalid Choice. Please enter numbers 1-6 only.");
+                            INPUT.nextLine(); // clear invalid input
+                        }
+                    }
+
 
                     if (deletechoice == 6) 
                         break; // Go back
@@ -147,30 +241,28 @@ public class EMHASEDITPATIENT {
                     } else if (deletechoice == 5) {
                         list = mainsystem.GET_IMMUNIZATIONS(patientId);
                         type = "Immunization";
-                    } else {
-                        System.out.println("Invalid Choice. Choose Options 1-6 Only.");
-                        continue;
-                    }
+                    } 
+                    
 
                     if (list.isEmpty()) {
-                        System.out.println("No records found.");
+                        System.out.println("No Records Found.");
                         continue;
                     }
 
                     System.out.println();
                     System.out.println("Select " + type + " to delete:");
-                    System.out.println("--------------------------------");
+                    System.out.println("=======================");
                     for (int i = 0; i < list.size(); i++) {
                         System.out.println((i + 1) + ". " + list.get(i));
                     }
-                    System.out.println("--------------------------------");
-
-                    System.out.print("Enter number: ");
+                    System.out.println("=======================");
+                    System.out.println();
+                    System.out.print("Enter Choice Number: ");
                     int index = INPUT.nextInt();
                     INPUT.nextLine();
 
                     if (index < 1 || index > list.size()) {
-                        System.out.println("Invalid selection.");
+                        System.out.println("Invalid Selection.");
                         continue;
                     }
 
@@ -197,7 +289,7 @@ public class EMHASEDITPATIENT {
                 while (true) {
                 System.out.println();
                 System.out.println("=========================================");
-                System.out.println("|             UPDATE CHOICES            |");
+                System.out.println("|         UPDATE PATIENT DETAILS        |");
                 System.out.println("|=======================================|");
                 System.out.println("| 1. Update Patient's Name              |");
                 System.out.println("| 2. Update Patient's Address           |");
@@ -213,9 +305,27 @@ public class EMHASEDITPATIENT {
                 System.out.println("| 12. Back To EMHAS Edit Choices        |");
                 System.out.println("=========================================");
                 System.out.println();
-                System.out.print("Choose Update Choices: ");
-                int updatechoice = INPUT.nextInt();
-                INPUT.nextLine();
+                int updatechoice = -1;
+
+                    // Error trap loop
+                    while (true) {
+                        System.out.print("Choose Category (1-6): ");
+                        try {
+                            updatechoice = INPUT.nextInt();
+                            INPUT.nextLine(); // clear buffer
+
+                            if (updatechoice >= 1 && updatechoice <= 12) {
+                                break; // valid input, exit loop
+                            } else {
+                                System.out.println();
+                                System.out.println("Invalid Choice. Please enter numbers 1-12 only.");
+                            }
+                        } catch (InputMismatchException e) {
+                            System.out.println();
+                            System.out.println("Invalid Choice. Please enter numbers 1-12 only.");
+                            INPUT.nextLine(); // clear invalid input
+                        }
+                    }
 
                 List<String> details = mainsystem.SEARCH_PATIENT(patientId);
 
@@ -260,7 +370,7 @@ public class EMHASEDITPATIENT {
                     for (String d : details) 
                         if (d.startsWith("Date of Birth:")) 
                             System.out.println("Current " + d);
-                   System.out.println();
+                    System.out.println();
                     System.out.println("====================================");
                     System.out.println("|        BIRTH MONTH OPTIONS       |");
                     System.out.println("|==================================|");
@@ -307,10 +417,8 @@ public class EMHASEDITPATIENT {
                         month = "November";
                     } else if (month_option == 12){
                         month = "December";
-                    } else {
-                        System.out.println("Invalid choice. Please enter 1-12 only.");
-                        return;
                     }
+                    
                     System.out.println();
                     System.out.print("Enter New Birth Day: ");
                     int day = INPUT.nextInt();
@@ -496,22 +604,20 @@ public class EMHASEDITPATIENT {
                     System.out.println();
                     System.out.println("Returning Back To EMHAS Edit Choices....");
                     break;
-                } else {
-                    System.out.println();
-                    System.out.println("Invalid Choice. Choose Options 1-12 Only.");
-                    continue;
-                }
+                } 
             } 
 
             } else if (option == 4) {
                 System.out.println();
                 System.out.println("Returning to EMHAS Menu System.... ");
                 break; 
-            } else {
-                System.out.println();
-                System.out.println("Invalid Choice. Choose Options 1-4 Only.");
-                continue;
             }
-        }
+            
+            
+        } 
+        return patientId;
+        
     }
+
+    
 }
