@@ -12,6 +12,8 @@ public class EMHASREGISTERPATIENT {
 
     public void REGISTERPATIENTS(){
 
+
+
         // Patient ID
         System.out.println();
         System.out.print("Enter Patient ID: ");
@@ -31,6 +33,12 @@ public class EMHASREGISTERPATIENT {
         System.out.println();
         System.out.print("Enter Middle Initial: ");
         String mi = INPUT.nextLine();
+
+        // Age
+        System.out.println();
+        System.out.print("Enter Age: ");
+        int age = INPUT.nextInt();
+        INPUT.nextLine();
 
         // Date of Birth - Month Menu
         System.out.println();
@@ -81,6 +89,7 @@ public class EMHASREGISTERPATIENT {
         } else if (dob_month_option == 12){
             dob_month = "December";
         } else {
+            System.out.println();
             System.out.println("Invalid choice. Please enter 1-12 only.");
             return;
         }
@@ -104,15 +113,11 @@ public class EMHASREGISTERPATIENT {
         } else if (genderChoice.equalsIgnoreCase("F")) {
             gender = "Female";
         } else {
+            System.out.println();
             System.out.println("Invalid choice. Please enter M or F only.");
             return;
         }
 
-        // Age
-        System.out.println();
-        System.out.print("Enter Age: ");
-        int age = INPUT.nextInt();
-        INPUT.nextLine();
 
         // Emergency Contact
         System.out.println();
@@ -169,6 +174,7 @@ public class EMHASREGISTERPATIENT {
         } else if (bloodtypeoption == 8){
             bloodtype = "AB-";
         } else {
+            System.out.println();
             System.out.println("Invalid Choice. Choose Options 1-8 Only.");
             return;
         }

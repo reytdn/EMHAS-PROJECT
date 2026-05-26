@@ -28,9 +28,9 @@ public class EMHASREGISTERUSER {
         // get middle name
         System.out.println();
         System.out.print("Enter Middle Initial: ");
-        String mi = INPUT.nextLine();
+        String mi = INPUT.nextLine(); //A.
        
-         // show profession menu
+        // show profession menu
         System.out.println();
         System.out.println("========================================");
         System.out.println("|        USER PROFESSION OPTIONS       |");
@@ -41,7 +41,7 @@ public class EMHASREGISTERUSER {
         System.out.println("| 4. Paramedic                         |");
         System.out.println("========================================");
         System.out.println();
- 
+
         // choose profession
         System.out.print("Select Option: ");
         int Option = INPUT.nextInt();

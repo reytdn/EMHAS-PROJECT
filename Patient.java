@@ -24,6 +24,9 @@ class Patient {
         this.conditions = conditions;
         this.medications = medications;
         this.pedigree = pedigree;
-        this.immunizations = immunizations;
+        this.immunizations = immunizations; 
+
     }
 }
+
+

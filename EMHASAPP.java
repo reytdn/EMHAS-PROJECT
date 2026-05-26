@@ -7,6 +7,8 @@ public class EMHASAPP {
 
         while (true) {
             if (Role.equalsIgnoreCase("Admin")){
+
+
                 System.out.println();
                 System.out.println("========================================");
                 System.out.println("|          EMHAS MENU SYSTEM           |");
@@ -86,6 +88,7 @@ public class EMHASAPP {
                 }
 
             } else if (Role.equalsIgnoreCase("User")){
+                
                 System.out.println();
                 System.out.println("========================================");
                 System.out.println("|          EMHAS MENU SYSTEM           |");
@@ -151,6 +154,7 @@ public class EMHASAPP {
                 } else {
                     System.out.println();
                     System.out.println("Invalid Choice. Choose Options 1-5 Only.");
+                    continue;
                 }
             }
         }

@@ -126,7 +126,8 @@ public class EMHASEDITPATIENT {
                     int deletechoice = INPUT.nextInt();
                     INPUT.nextLine();
 
-                    if (deletechoice == 6) break; // ✅ go back
+                    if (deletechoice == 6) 
+                        break; // Go back
 
                     List<String> list = new ArrayList<>();
                     String type = "";
@@ -259,9 +260,57 @@ public class EMHASEDITPATIENT {
                     for (String d : details) 
                         if (d.startsWith("Date of Birth:")) 
                             System.out.println("Current " + d);
+                   System.out.println();
+                    System.out.println("====================================");
+                    System.out.println("|        BIRTH MONTH OPTIONS       |");
+                    System.out.println("|==================================|");
+                    System.out.println("| 1. January                       |");
+                    System.out.println("| 2. February                      |");
+                    System.out.println("| 3. March                         |");
+                    System.out.println("| 4. April                         |");
+                    System.out.println("| 5. May                           |");
+                    System.out.println("| 6. June                          |");
+                    System.out.println("| 7. July                          |");
+                    System.out.println("| 8. August                        |");
+                    System.out.println("| 9. September                     |");
+                    System.out.println("| 10. October                      |");
+                    System.out.println("| 11. November                     |");
+                    System.out.println("| 12. December                     |");
+                    System.out.println("====================================");
                     System.out.println();
-                    System.out.print("Enter New Birth Month: ");
-                    String month = INPUT.nextLine();
+                    System.out.print("Enter Birth Month (1-12): ");
+                    int month_option = INPUT.nextInt();
+                    INPUT.nextLine(); // clear buffer
+
+                    String month = "";
+                    if (month_option == 1){
+                        month = "January";
+                    } else if (month_option == 2){
+                        month = "February";
+                    } else if (month_option == 3){
+                        month = "March";
+                    } else if (month_option == 4){ 
+                        month = "April";
+                    } else if (month_option == 5){
+                        month = "May";
+                    } else if (month_option == 6){
+                        month = "June";
+                    } else if (month_option == 7){
+                        month = "July";
+                    } else if (month_option == 8){
+                        month = "August";
+                    } else if (month_option == 9){
+                        month = "September";
+                    } else if (month_option == 10){
+                        month = "October";
+                    } else if (month_option == 11){
+                        month = "November";
+                    } else if (month_option == 12){
+                        month = "December";
+                    } else {
+                        System.out.println("Invalid choice. Please enter 1-12 only.");
+                        return;
+                    }
                     System.out.println();
                     System.out.print("Enter New Birth Day: ");
                     int day = INPUT.nextInt();
