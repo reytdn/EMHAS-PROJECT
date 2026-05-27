@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 
 public class EMHASEDITPATIENT {
@@ -283,330 +285,358 @@ public class EMHASEDITPATIENT {
                 }
 
 
-                
-
             } else if (option == 3) {
                 while (true) {
-                System.out.println();
-                System.out.println("=========================================");
-                System.out.println("|         UPDATE PATIENT DETAILS        |");
-                System.out.println("|=======================================|");
-                System.out.println("| 1. Update Patient's Name              |");
-                System.out.println("| 2. Update Patient's Address           |");
-                System.out.println("| 3. Update Patient's Birthdate         |");
-                System.out.println("| 4. Update Patient's Blood Type        |");
-                System.out.println("| 5. Update Patient's Age               |");
-                System.out.println("| 6. Update Patient's Emergency Contact |");
-                System.out.println("| 7. Update Patient's Allergies         |");
-                System.out.println("| 8. Update Patient's Conditions        |");
-                System.out.println("| 9. Update Patient's Medications       |");
-                System.out.println("| 10. Update Patient's Pedigree         |");
-                System.out.println("| 11. Update Patient's Immunizations    |");
-                System.out.println("| 12. Back To EMHAS Edit Choices        |");
-                System.out.println("=========================================");
-                System.out.println();
-                int updatechoice = -1;
+                    System.out.println();
+                    System.out.println("=========================================");
+                    System.out.println("|         UPDATE PATIENT DETAILS        |");
+                    System.out.println("|=======================================|");
+                    System.out.println("| 1. Update Patient's Name              |");
+                    System.out.println("| 2. Update Patient's Address           |");
+                    System.out.println("| 3. Update Patient's Blood Type        |");
+                    System.out.println("| 4. Update Patient's Birthdate & Age   |");
+                    System.out.println("| 5. Update Patient's Emergency Contact |");
+                    System.out.println("| 6. Update Patient's Allergies         |");
+                    System.out.println("| 7. Update Patient's Conditions        |");
+                    System.out.println("| 8. Update Patient's Medications       |");
+                    System.out.println("| 9. Update Patient's Pedigree          |");
+                    System.out.println("| 10. Update Patient's Immunizations    |");
+                    System.out.println("| 11. Back To EMHAS Edit Choices        |");
+                    System.out.println("=========================================");
+                    System.out.println();
 
-                    // Error trap loop
+                    int updatechoice = -1;
                     while (true) {
-                        System.out.print("Choose Category (1-6): ");
+                        System.out.print("Choose Category (1-11): ");
                         try {
                             updatechoice = INPUT.nextInt();
-                            INPUT.nextLine(); // clear buffer
-
-                            if (updatechoice >= 1 && updatechoice <= 12) {
-                                break; // valid input, exit loop
-                            } else {
-                                System.out.println();
-                                System.out.println("Invalid Choice. Please enter numbers 1-12 only.");
-                            }
-                        } catch (InputMismatchException e) {
-                            System.out.println();
-                            System.out.println("Invalid Choice. Please enter numbers 1-12 only.");
-                            INPUT.nextLine(); // clear invalid input
+                            INPUT.nextLine();
+                            if (updatechoice >= 1 && updatechoice <= 11) break;
+                            else System.out.println("Invalid Choice. Please enter numbers 1-11 only.");
+                        } catch (Exception e) {
+                            System.out.println("Invalid input! Numbers only (1-11).");
+                            INPUT.nextLine();
                         }
                     }
 
-                List<String> details = mainsystem.SEARCH_PATIENT(patientId);
-
-                if (updatechoice == 1) {
-                    System.out.println();
-                    for (String d : details) 
-                        if (d.startsWith("Name:")) 
-                            System.out.println("Current " + d);
-                    System.out.println();
-                    System.out.print("Enter New First Name: ");
-                    String fname = INPUT.nextLine();
-                    System.out.println();
-                    System.out.print("Enter New Middle Initial: ");
-                    String mi = INPUT.nextLine();
-                    System.out.println();
-                    System.out.print("Enter New Last Name: ");
-                    String lname = INPUT.nextLine();
-                    mainsystem.UPDATE_NAME(patientId, fname, mi, lname);
-                    System.out.println();
-                    System.out.println("Update Successful");
-
-                } else if (updatechoice == 2) {
-                    System.out.println();
-                    for (String d : details) 
-                        if (d.startsWith("Address:")) 
-                            System.out.println("Current " + d);
-                    System.out.println();
-                    System.out.print("Enter New Barangay: ");
-                    String barangay = INPUT.nextLine();
-                    System.out.println();
-                    System.out.print("Enter New City: ");
-                    String city = INPUT.nextLine();
-                    System.out.println();
-                    System.out.print("Enter New Province: ");
-                    String province = INPUT.nextLine();
-                    mainsystem.UPDATE_ADDRESS(patientId, barangay, city, province);
-                    System.out.println();
-                    System.out.println("Update Successful");
-
-                } else if (updatechoice == 3) {
-                    System.out.println();
-                    for (String d : details) 
-                        if (d.startsWith("Date of Birth:")) 
-                            System.out.println("Current " + d);
-                    System.out.println();
-                    System.out.println("====================================");
-                    System.out.println("|        BIRTH MONTH OPTIONS       |");
-                    System.out.println("|==================================|");
-                    System.out.println("| 1. January                       |");
-                    System.out.println("| 2. February                      |");
-                    System.out.println("| 3. March                         |");
-                    System.out.println("| 4. April                         |");
-                    System.out.println("| 5. May                           |");
-                    System.out.println("| 6. June                          |");
-                    System.out.println("| 7. July                          |");
-                    System.out.println("| 8. August                        |");
-                    System.out.println("| 9. September                     |");
-                    System.out.println("| 10. October                      |");
-                    System.out.println("| 11. November                     |");
-                    System.out.println("| 12. December                     |");
-                    System.out.println("====================================");
-                    System.out.println();
-                    System.out.print("Enter Birth Month (1-12): ");
-                    int month_option = INPUT.nextInt();
-                    INPUT.nextLine(); // clear buffer
-
-                    String month = "";
-                    if (month_option == 1){
-                        month = "January";
-                    } else if (month_option == 2){
-                        month = "February";
-                    } else if (month_option == 3){
-                        month = "March";
-                    } else if (month_option == 4){ 
-                        month = "April";
-                    } else if (month_option == 5){
-                        month = "May";
-                    } else if (month_option == 6){
-                        month = "June";
-                    } else if (month_option == 7){
-                        month = "July";
-                    } else if (month_option == 8){
-                        month = "August";
-                    } else if (month_option == 9){
-                        month = "September";
-                    } else if (month_option == 10){
-                        month = "October";
-                    } else if (month_option == 11){
-                        month = "November";
-                    } else if (month_option == 12){
-                        month = "December";
+                    if (updatechoice == 1) {
+                        // Name
+                        String fname, mi, lname;
+                        while (true) {
+                            System.out.print("Enter New First Name: ");
+                            fname = INPUT.nextLine().trim();
+                            if (fname.matches("[a-zA-Z ]+")) break;
+                            else System.out.println("Letters only.");
+                        }
+                        while (true) {
+                            System.out.print("Enter New Middle Initial: ");
+                            mi = INPUT.nextLine().trim();
+                            if (mi.matches("[a-zA-Z]")) {
+                                mi = mi.toUpperCase();
+                                break;
+                            } else System.out.println("1 letter only.");
+                        }
+                        while (true) {
+                            System.out.print("Enter New Last Name: ");
+                            lname = INPUT.nextLine().trim();
+                            if (lname.matches("[a-zA-Z ]+")) break;
+                            else System.out.println("Letters only.");
+                        }
+                        mainsystem.UPDATE_NAME(patientId, fname, mi, lname);
+                        System.out.println("Update Successful");
                     }
-                    
-                    System.out.println();
-                    System.out.print("Enter New Birth Day: ");
-                    int day = INPUT.nextInt();
-                    System.out.println();
-                    System.out.print("Enter New Birth Year: ");
-                    int year = INPUT.nextInt();
-                    INPUT.nextLine();
-                    System.out.println();
-                    mainsystem.UPDATE_BIRTHDATE(patientId, month, day, year);
-                    System.out.println();
-                    System.out.println("Update Successful");
 
-                } else if (updatechoice == 4) {
-                    System.out.println();
-                    for (String d : details) 
-                        if (d.startsWith("Blood Type:")) 
-                            System.out.println("Current " + d);
-                    System.out.println();
-                    System.out.println("==============================");
-                    System.out.println("|     BLOOD TYPE OPTIONS     |");
-                    System.out.println("|============================|");
-                    System.out.println("| 1. O+                      |");
-                    System.out.println("| 2. O-                      |");
-                    System.out.println("| 3. A+                      |");
-                    System.out.println("| 4. A-                      |");
-                    System.out.println("| 5. B+                      |");
-                    System.out.println("| 6. B-                      |");
-                    System.out.println("| 7. AB+                     |");
-                    System.out.println("| 8. AB-                     |");
-                    System.out.println("==============================");
-                    System.out.println();
-                    System.out.print("Enter New Blood Type Option (1-8): ");
-                    int bloodtypeoption = INPUT.nextInt();
-                    INPUT.nextLine();
-                    String newBloodType = "";
-                    if (bloodtypeoption == 1){
-                        newBloodType = "O+";
-                    } else if (bloodtypeoption == 2){
-                        newBloodType = "O-";
-                    } else if (bloodtypeoption == 3){
-                        newBloodType = "A+";
-                    } else if (bloodtypeoption == 4){
-                        newBloodType = "A-";
-                    } else if (bloodtypeoption == 5){
-                        newBloodType = "B+";
-                    } else if (bloodtypeoption == 6){
-                        newBloodType = "B-";
-                    } else if (bloodtypeoption == 7){
-                        newBloodType = "AB+";
-                    } else if (bloodtypeoption == 8){
-                        newBloodType = "AB-";
-                    } else {
-                        System.out.println();
-                        System.out.println("Invalid Choice. Choose Options 1-8 Only.");
-                        continue;
+                    else if (updatechoice == 2) {
+                        // Address
+                        String barangay, city, province;
+                        while (true) {
+                            System.out.print("Enter New Barangay: ");
+                            barangay = INPUT.nextLine().trim();
+                            if (!barangay.isEmpty()) break;
+                            else System.out.println("Barangay cannot be empty.");
+                        }
+                        while (true) {
+                            System.out.print("Enter New City: ");
+                            city = INPUT.nextLine().trim();
+                            if (city.matches("[a-zA-Z ]+")) break;
+                            else System.out.println("Letters only.");
+                        }
+                        while (true) {
+                            System.out.print("Enter New Province: ");
+                            province = INPUT.nextLine().trim();
+                            if (province.matches("[a-zA-Z ]+")) break;
+                            else System.out.println("Letters only.");
+                        }
+                        mainsystem.UPDATE_ADDRESS(patientId, barangay, city, province);
+                        System.out.println("Update Successful");
                     }
-                    mainsystem.UPDATE_BLOODTYPE(patientId, newBloodType);
-                    System.out.println();
-                    System.out.println("Update Successful");
 
-                } else if (updatechoice == 5) {
-                    System.out.println();
-                    for (String d : details) 
-                        if (d.startsWith("Age:")) 
-                            System.out.println("Current " + d);
-                    System.out.println();
-                    System.out.print("Enter New Age: ");
-                    int age = INPUT.nextInt();
-                    INPUT.nextLine();
-                    mainsystem.UPDATE_AGE(patientId, age);
-                    System.out.println();
-                    System.out.println("Update Successful");
+                    else if (updatechoice == 3) {
+                        // Blood Type with menu
+                        int bloodtypeoption;
+                        while (true) {
+                            try {
+                                System.out.println();
+                                System.out.println("==============================");
+                                System.out.println("|     BLOOD TYPE OPTIONS     |");
+                                System.out.println("|============================|");
+                                System.out.println("| 1. O+                      |");
+                                System.out.println("| 2. O-                      |");
+                                System.out.println("| 3. A+                      |");
+                                System.out.println("| 4. A-                      |");
+                                System.out.println("| 5. B+                      |");
+                                System.out.println("| 6. B-                      |");
+                                System.out.println("| 7. AB+                     |");
+                                System.out.println("| 8. AB-                     |");
+                                System.out.println("==============================");
+                                System.out.print("Enter New Blood Type Option (1-8): ");
+                                bloodtypeoption = INPUT.nextInt();
+                                INPUT.nextLine();
+                                if (bloodtypeoption >= 1 && bloodtypeoption <= 8) break;
+                                else System.out.println("1-8 only.");
+                            } catch (Exception e) {
+                                System.out.println("Numbers only.");
+                                INPUT.nextLine();
+                            }
+                        }
+                        String newBloodType = "";
+                        if (bloodtypeoption == 1) newBloodType = "O+";
+                        else if (bloodtypeoption == 2) newBloodType = "O-";
+                        else if (bloodtypeoption == 3) newBloodType = "A+";
+                        else if (bloodtypeoption == 4) newBloodType = "A-";
+                        else if (bloodtypeoption == 5) newBloodType = "B+";
+                        else if (bloodtypeoption == 6) newBloodType = "B-";
+                        else if (bloodtypeoption == 7) newBloodType = "AB+";
+                        else if (bloodtypeoption == 8) newBloodType = "AB-";
+                        mainsystem.UPDATE_BLOODTYPE(patientId, newBloodType);
+                        System.out.println("Update Successful");
+                    }
 
-                } else if (updatechoice == 6) {
-                    System.out.println();
-                    for (String d : details) 
-                        if (d.startsWith("Emergency Contact:")) 
-                            System.out.println("Current " + d);
-                    System.out.println();
-                    System.out.print("Enter New Emergency Contact: ");
-                    String contact = INPUT.nextLine();
-                    mainsystem.UPDATE_EMERGENCYCONTACT(patientId, contact);
-                    System.out.println();
-                    System.out.println("Update Successful");
+                    else if (updatechoice == 4) {
+                        // Birthdate & Age together
+                        int dob_month_option, dob_day, dob_year;
+                        // Month menu
+                        while (true) {
+                            try {
+                                System.out.println();
+                                System.out.println("====================================");
+                                System.out.println("|        BIRTH MONTH OPTIONS       |");
+                                System.out.println("|==================================|");
+                                System.out.println("| 1. January                       |");
+                                System.out.println("| 2. February                      |");
+                                System.out.println("| 3. March                         |");
+                                System.out.println("| 4. April                         |");
+                                System.out.println("| 5. May                           |");
+                                System.out.println("| 6. June                          |");
+                                System.out.println("| 7. July                          |");
+                                System.out.println("| 8. August                        |");
+                                System.out.println("| 9. September                     |");
+                                System.out.println("| 10. October                      |");
+                                System.out.println("| 11. November                     |");
+                                System.out.println("| 12. December                     |");
+                                System.out.println("====================================");
+                                System.out.print("Enter Birth Month (1-12): ");
+                                dob_month_option = INPUT.nextInt();
+                                INPUT.nextLine();
+                                if (dob_month_option >= 1 && dob_month_option <= 12) break;
+                                else System.out.println("1-12 only.");
+                            } catch (Exception e) {
+                                System.out.println("Numbers only.");
+                                INPUT.nextLine();
+                            }
+                        }
+                        while (true) {
+                            try {
+                                System.out.print("Enter Birth Year: ");
+                                dob_year = INPUT.nextInt();
+                                INPUT.nextLine();
+                                int currentYear = java.time.LocalDate.now().getYear();
+                                if (dob_year >= 1900 && dob_year <= currentYear) break;
+                                else System.out.println("Invalid year.");
+                            } catch (Exception e) {
+                                System.out.println("Numbers only.");
+                                INPUT.nextLine();
+                            }
+                        }
+                        while (true) {
+                            try {
+                                System.out.print("Enter Birth Day: ");
+                                dob_day = INPUT.nextInt();
+                                INPUT.nextLine();
 
-                } else if (updatechoice == 7) {
-                    System.out.println();
-                    System.out.println("=======================");
-                    System.out.println("Allergies of " + patientId);
-                    System.out.println("=======================");
-                    List<String> allergiesList = mainsystem.GET_ALLERGIES(patientId);
-                    for (String a : allergiesList) 
-                        System.out.println(a);
-                    System.out.println("=======================");
-                    System.out.println();
-                    System.out.print("Enter the exact Allergy to update: ");
-                    String oldAllergy = INPUT.nextLine();
-                    System.out.println();
-                    System.out.print("Enter New Allergy: ");
-                    String newAllergy = INPUT.nextLine();
-                    mainsystem.UPDATE_SPECIFIC_ALLERGY(patientId, oldAllergy, newAllergy);
-                    System.out.println();
-                    System.out.println("Update Successful");
+                                int maxDays = 31;
+                                if (dob_month_option == 4 || dob_month_option == 6 ||
+                                    dob_month_option == 9 || dob_month_option == 11) {
+                                    maxDays = 30;
+                                } else if (dob_month_option == 2) {
+                                    boolean leap = (dob_year % 4 == 0 && dob_year % 100 != 0) ||
+                                                (dob_year % 400 == 0);
+                                    maxDays = leap ? 29 : 28;
+                                }
 
-                } else if (updatechoice == 8) {
-                    System.out.println();
-                    System.out.println("=======================");
-                    System.out.println("Conditions of " + patientId);
-                    System.out.println("=======================");
-                    List<String> conditionsList = mainsystem.GET_CONDITIONS(patientId);
-                    for (String c : conditionsList) 
-                        System.out.println(c);
-                    System.out.println("=======================");
-                    System.out.println();
-                    System.out.print("Enter the exact Condition to update: ");
-                    String oldCondition = INPUT.nextLine();
-                    System.out.println();
-                    System.out.print("Enter New Condition: ");
-                    String newCondition = INPUT.nextLine();
-                    System.out.println();
-                    mainsystem.UPDATE_SPECIFIC_CONDITION(patientId, oldCondition, newCondition);
-                    System.out.println();
-                    System.out.println("Update Successful");
+                                if (dob_day >= 1 && dob_day <= maxDays) break;
+                                else System.out.println("Invalid day for selected month.");
+                            } catch (Exception e) {
+                                System.out.println("Numbers only.");
+                                INPUT.nextLine();
+                            }
+                        }
 
-                } else if (updatechoice == 9) {
-                    System.out.println();
-                    System.out.println("=======================");
-                    System.out.println("Medications of " + patientId);
-                    System.out.println("=======================");
-                    List<String> medsList = mainsystem.GET_MEDICATIONS(patientId);
-                    for (String m : medsList) 
-                        System.out.println(m);
-                    System.out.println("=======================");
-                    System.out.println();
-                    System.out.print("Enter the exact Medication to update: ");
-                    String oldMed = INPUT.nextLine();
-                    System.out.println();
-                    System.out.print("Enter New Medication: ");
-                    String newMed = INPUT.nextLine();
-                    mainsystem.UPDATE_SPECIFIC_MEDICATION(patientId, oldMed, newMed);
-                    System.out.println();
-                    System.out.println("Update Successful");
+                        int age;
+                        while (true) {
+                            try {
+                                System.out.print("Enter Age: ");
+                                age = INPUT.nextInt();
+                                INPUT.nextLine();
 
-                } else if (updatechoice == 10) {
-                    System.out.println();
-                    System.out.println("=======================");
-                    System.out.println("Pedigree of " + patientId);
-                    System.out.println("=======================");
-                    List<String> pedigreeList = mainsystem.GET_PEDIGREE(patientId);
-                    for (String p : pedigreeList) 
-                        System.out.println(p);
-                    System.out.println("=======================");
-                    System.out.println();
-                    System.out.print("Enter the exact Pedigree entry to update: ");
-                    String oldPedigree = INPUT.nextLine();
-                    System.out.println();
-                    System.out.print("Enter New Pedigree: ");
-                    String newPedigree = INPUT.nextLine();
-                    mainsystem.UPDATE_SPECIFIC_PEDIGREE(patientId, oldPedigree, newPedigree);
-                    System.out.println();
-                    System.out.println("Update Successful");
+                                if (age < 0 || age > 150) {
+                                    System.out.println("Age must be 0-150 only.");
+                                    continue;
+                                }
 
-                } else if (updatechoice == 11) {
-                    System.out.println();
-                    System.out.println("=======================");
-                    System.out.println("Immunizations of " + patientId);
-                    System.out.println("=======================");
-                    List<String> immunizationsList = mainsystem.GET_IMMUNIZATIONS(patientId);
-                    for (String i : immunizationsList) 
-                        System.out.println(i);
-                    System.out.println("=======================");
-                    System.out.println();
-                    System.out.print("Enter the exact Immunization to update: ");
-                    String oldImmunization = INPUT.nextLine();
-                    System.out.println();
-                    System.out.print("Enter New Immunization: ");
-                    String newImmunization = INPUT.nextLine();
-                    mainsystem.UPDATE_SPECIFIC_IMMUNIZATION(patientId, oldImmunization, newImmunization);
-                    System.out.println();
-                    System.out.println("Update Successful");
+                                LocalDate birth = LocalDate.of(dob_year, dob_month_option, dob_day);
+                                LocalDate today = LocalDate.now();
+                                int computedAge = Period.between(birth, today).getYears();
 
-                } else if (updatechoice == 12) {
-                    System.out.println();
-                    System.out.println("Returning Back To EMHAS Edit Choices....");
-                    break;
-                } 
-            } 
+                                if (age == computedAge) {
+                                    mainsystem.UPDATE_BIRTHDATE(patientId, String.valueOf(dob_month_option), dob_day, dob_year);
+                                    mainsystem.UPDATE_AGE(patientId, age);
+                                    System.out.println("Update Successful");
+                                    break;
+                                } else {
+                                    System.out.println("Age does not match birthdate.");
+                                }
+                            } catch (Exception e) {
+                                System.out.println("Numbers only.");
+                                INPUT.nextLine();
+                            }
+                        }
+                    }
 
+                    else if (updatechoice == 5) {
+                        // Emergency Contact
+                        String contact;
+                        while (true) {
+                            System.out.print("Enter New Emergency Contact (11 digits): ");
+                            contact = INPUT.nextLine().trim();
+                            if (contact.matches("\\d{11}")) break;
+                            else System.out.println("Must be 11 digits.");
+                        }
+                        mainsystem.UPDATE_EMERGENCYCONTACT(patientId, contact);
+                        System.out.println("Update Successful");
+                    }
+
+                    else if (updatechoice == 6) {
+                        // Allergies
+                        List<String> allergiesList = mainsystem.GET_ALLERGIES(patientId);
+                        for (String a : allergiesList) System.out.println(a);
+                        String oldAllergy, newAllergy;
+                        while (true) {
+                            System.out.print("Enter the exact Allergy to update: ");
+                            oldAllergy = INPUT.nextLine().trim();
+                            if (!oldAllergy.isEmpty()) break;
+                            else System.out.println("Cannot be empty.");
+                        }
+                        while (true) {
+                            System.out.print("Enter New Allergy: ");
+                            newAllergy = INPUT.nextLine().trim();
+                            if (!newAllergy.isEmpty()) break;
+                            else System.out.println("Cannot be empty.");
+                        }
+                        mainsystem.UPDATE_SPECIFIC_ALLERGY(patientId, oldAllergy, newAllergy);
+                        System.out.println("Update Successful");
+                    }
+
+                    else if (updatechoice == 7) {
+                        // Conditions
+                        List<String> conditionsList = mainsystem.GET_CONDITIONS(patientId);
+                        for (String c : conditionsList) System.out.println(c);
+                        String oldCondition, newCondition;
+                        while (true) {
+                            System.out.print("Enter the exact Condition to update: ");
+                            oldCondition = INPUT.nextLine().trim();
+                            if (!oldCondition.isEmpty()) break;
+                            else System.out.println("Cannot be empty.");
+                        }
+                        while (true) {
+                            System.out.print("Enter New Condition: ");
+                            newCondition = INPUT.nextLine().trim();
+                            if (!newCondition.isEmpty()) break;
+                            else System.out.println("Cannot be empty.");
+                        }
+                        mainsystem.UPDATE_SPECIFIC_CONDITION(patientId, oldCondition, newCondition);
+                        System.out.println("Update Successful");
+                    }
+
+                    else if (updatechoice == 8) {
+                        // Medications
+                        List<String> medsList = mainsystem.GET_MEDICATIONS(patientId);
+                        for (String m : medsList) System.out.println(m);
+                        String oldMed, newMed;
+                        while (true) {
+                            System.out.print("Enter the exact Medication to update: ");
+                            oldMed = INPUT.nextLine().trim();
+                            if (!oldMed.isEmpty()) break;
+                            else System.out.println("Cannot be empty.");
+                        }
+                        while (true) {
+                            System.out.print("Enter New Medication: ");
+                            newMed = INPUT.nextLine().trim();
+                            if (!newMed.isEmpty()) break;
+                            else System.out.println("Cannot be empty.");
+                        }
+                        mainsystem.UPDATE_SPECIFIC_MEDICATION(patientId, oldMed, newMed);
+                        System.out.println("Update Successful");
+                    }
+
+                    else if (updatechoice == 9) {
+                        // Pedigree (Family History)
+                        List<String> pedigreeList = mainsystem.GET_PEDIGREE(patientId);
+                        for (String p : pedigreeList) System.out.println(p);
+                        String oldHistory, newHistory;
+                        while (true) {
+                            System.out.print("Enter the exact Family History to update: ");
+                            oldHistory = INPUT.nextLine().trim();
+                            if (!oldHistory.isEmpty()) break;
+                            else System.out.println("Cannot be empty.");
+                        }
+                        while (true) {
+                            System.out.print("Enter New Family History: ");
+                            newHistory = INPUT.nextLine().trim();
+                            if (!newHistory.isEmpty()) break;
+                            else System.out.println("Cannot be empty.");
+                        }
+                        mainsystem.UPDATE_SPECIFIC_PEDIGREE(patientId, oldHistory, newHistory);
+                        System.out.println("Update Successful");
+                    }
+
+                    else if (updatechoice == 10) {
+                        // Immunizations
+                        List<String> immunizationsList = mainsystem.GET_IMMUNIZATIONS(patientId);
+                        for (String i : immunizationsList) System.out.println(i);
+                        String oldImmunization, newImmunization;
+                        while (true) {
+                            System.out.print("Enter the exact Immunization to update: ");
+                            oldImmunization = INPUT.nextLine().trim();
+                            if (!oldImmunization.isEmpty()) break;
+                            else System.out.println("Cannot be empty.");
+                        }
+                        while (true) {
+                            System.out.print("Enter New Immunization: ");
+                            newImmunization = INPUT.nextLine().trim();
+                            if (!newImmunization.isEmpty()) break;
+                            else System.out.println("Cannot be empty.");
+                        }
+                        mainsystem.UPDATE_SPECIFIC_IMMUNIZATION(patientId, oldImmunization, newImmunization);
+                        System.out.println("Update Successful");
+                    }
+
+                    else if (updatechoice == 11) {
+                        System.out.println("Returning Back To EMHAS Edit Choices....");
+                        break;
+                    }
+                }
+                
             } else if (option == 4) {
                 System.out.println();
                 System.out.println("Returning to EMHAS Menu System.... ");

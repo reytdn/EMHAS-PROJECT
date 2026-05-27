@@ -9,7 +9,15 @@ import java.util.List;
 
 public class EMHASEMERGENCYACCESS {
 
-    public static void ACCESSEMERGENCY(List<String> logs, String patientId) {
+    public static void ACCESSEMERGENCY(String patientId,
+                                       String patientName,
+                                       String bloodType,
+                                       String emergencyContact,
+                                       List<String> allergies,
+                                       List<String> conditions,
+                                       List<String> medications,
+                                       List<String> familyHistory,
+                                       List<String> immunizations) {
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage(PDRectangle.A4);
             document.addPage(page);
@@ -22,10 +30,7 @@ public class EMHASEMERGENCYACCESS {
 
             float margin = 50;
             float yStart = 750;
-            float tableWidth = page.getMediaBox().getWidth() - 2 * margin;
-            float rowHeight = 30;
-            int cols = 2;
-            float colWidth = tableWidth / cols;
+            float rowHeight = 25;
 
             // ✅ Add MediRush logo (upper left)
             PDImageXObject mediRushLogo = PDImageXObject.createFromFile("MEDIRUSHLOGO.jpg", document);
@@ -35,17 +40,39 @@ public class EMHASEMERGENCYACCESS {
             PDImageXObject dohLogo = PDImageXObject.createFromFile("DOHLOGO.png", document);
             content.drawImage(dohLogo, page.getMediaBox().getWidth() - margin - 80, page.getMediaBox().getHeight() - 100, 80, 80);
 
-            // Title (shifted down so it doesn’t overlap logos)
+            // Title
             content.setFont(arialBold, 18);
             content.beginText();
             content.newLineAtOffset(margin, yStart - 50);
-            content.showText("         Critical Emergency Data for Patient ID: " + patientId);
+            content.showText("            Critical Emergency Data for Patient ID: " + patientId);
             content.endText();
 
-            yStart -= 70;
+            yStart -= 100;
 
-            // Draw table
-            yStart = drawTable(content, arial, arialBold, margin, yStart, colWidth, rowHeight, logs, "");
+            // Patient core info
+            content.setFont(arialBold, 14);
+            content.beginText();
+            content.newLineAtOffset(margin, yStart);
+            content.showText("Patient Name: " + patientName);
+            content.endText();
+
+            yStart -= 20;
+            content.beginText();
+            content.newLineAtOffset(margin, yStart);
+            content.showText("Blood Type: " + bloodType);
+            content.endText();
+
+            yStart -= 20;
+            content.beginText();
+            content.newLineAtOffset(margin, yStart);
+            content.showText("Emergency Contact: " + emergencyContact);
+            content.endText();
+
+            yStart -= 10;
+
+            // Draw medical info table (✅ fixed call includes page)
+            yStart = drawMedicalTable(content, page, arial, arialBold, margin, yStart, rowHeight,
+                                      allergies, conditions, medications, familyHistory, immunizations);
 
             content.close();
 
@@ -69,67 +96,85 @@ public class EMHASEMERGENCYACCESS {
         }
     }
 
-    // Helper method to draw a table section
-    private static float drawTable(PDPageContentStream content, PDType0Font arial, PDType0Font arialBold,
-                                   float margin, float yStart, float colWidth, float rowHeight,
-                                   List<String> data, String sectionTitle) throws IOException {
+    // Helper method to draw the 5-column medical info table
+    private static float drawMedicalTable(PDPageContentStream content, PDPage page,
+                                          PDType0Font arial, PDType0Font arialBold,
+                                          float margin, float yStart, float rowHeight,
+                                          List<String> allergies, List<String> conditions,
+                                          List<String> medications, List<String> familyHistory,
+                                          List<String> immunizations) throws IOException {
 
-        if (sectionTitle != null && !sectionTitle.isEmpty()) {
-            content.setFont(arialBold, 14);
-            content.beginText();
-            content.newLineAtOffset(margin, yStart);
-            content.showText(sectionTitle);
-            content.endText();
-            yStart -= 30;
-        }
+        String[] headers = {"ALLERGIES", "CONDITIONS", "MEDICATIONS", "PEDIGREES", "VACCINES"};
+        int cols = headers.length;
+        float tableWidth = page.getMediaBox().getWidth() - 2 * margin;  // ✅ fixed
+        float colWidth = tableWidth / cols;
 
-        // Headers
-        String[] headers = {"Field", "Value"};
-        content.setFont(arialBold, 16);
+        // Draw headers
+        content.setFont(arialBold, 12);
         for (int i = 0; i < headers.length; i++) {
-            String header = headers[i];
-            float textWidth = arialBold.getStringWidth(header) / 1000 * 12;
+            float textWidth = arialBold.getStringWidth(headers[i]) / 1000 * 12;
             float xOffset = margin + i * colWidth + (colWidth - textWidth) / 2;
             float yOffset = yStart - 20;
-
             content.beginText();
             content.newLineAtOffset(xOffset, yOffset);
-            content.showText(header);
+            content.showText(headers[i]);
             content.endText();
         }
 
+        // Determine max rows among all lists
+        int maxRows = Math.max(allergies.size(),
+                       Math.max(conditions.size(),
+                       Math.max(medications.size(),
+                       Math.max(familyHistory.size(), immunizations.size()))));
+
         // Draw grid
-        int totalRows = data.size() + 1;
-        for (int i = 0; i <= totalRows; i++) {
+        for (int i = 0; i <= maxRows + 1; i++) {
             float y = yStart - i * rowHeight;
             content.moveTo(margin, y);
-            content.lineTo(margin + colWidth * 2, y);
+            content.lineTo(margin + tableWidth, y);
         }
-        for (int i = 0; i <= 2; i++) {
+        for (int i = 0; i <= cols; i++) {
             float x = margin + i * colWidth;
             content.moveTo(x, yStart);
-            content.lineTo(x, yStart - totalRows * rowHeight);
+            content.lineTo(x, yStart - (maxRows + 1) * rowHeight);
         }
         content.stroke();
 
         // Fill rows
-        int rowIndex = 1;
-        for (String entry : data) {
-            String[] parts = entry.split(":", 2);
-            for (int i = 0; i < parts.length; i++) {
+        content.setFont(arial, 11);
+        for (int row = 0; row < maxRows; row++) {
+            if (row < allergies.size()) {
                 content.beginText();
-                if (i == 0) {
-                    content.setFont(arialBold, 11);
-                } else {
-                    content.setFont(arial, 11);
-                }
-                content.newLineAtOffset(margin + i * colWidth + 10, yStart - rowIndex * rowHeight - 20);
-                content.showText(parts[i].trim());
+                content.newLineAtOffset(margin + 10, yStart - (row + 1) * rowHeight - 20);
+                content.showText(allergies.get(row));
                 content.endText();
             }
-            rowIndex++;
+            if (row < conditions.size()) {
+                content.beginText();
+                content.newLineAtOffset(margin + colWidth + 10, yStart - (row + 1) * rowHeight - 20);
+                content.showText(conditions.get(row));
+                content.endText();
+            }
+            if (row < medications.size()) {
+                content.beginText();
+                content.newLineAtOffset(margin + 2 * colWidth + 10, yStart - (row + 1) * rowHeight - 20);
+                content.showText(medications.get(row));
+                content.endText();
+            }
+            if (row < familyHistory.size()) {
+                content.beginText();
+                content.newLineAtOffset(margin + 3 * colWidth + 10, yStart - (row + 1) * rowHeight - 20);
+                content.showText(familyHistory.get(row));
+                content.endText();
+            }
+            if (row < immunizations.size()) {
+                content.beginText();
+                content.newLineAtOffset(margin + 4 * colWidth + 10, yStart - (row + 1) * rowHeight - 20);
+                content.showText(immunizations.get(row));
+                content.endText();
+            }
         }
 
-        return yStart - totalRows * rowHeight;
+        return yStart - (maxRows + 1) * rowHeight;
     }
 }

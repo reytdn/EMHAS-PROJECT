@@ -62,14 +62,27 @@ public class EMHASAPP {
                     System.out.println();
                     System.out.print("Enter Patient ID To View Details: ");
                     String patientId = INPUT.nextLine();
-                    List<String> logs = mainsystem.ACCESS_EMERGENCY(patientId);
-                    if (logs.isEmpty()) {
-                        System.out.println();
-                        System.out.println("No records found for Patient ID: " + patientId);
+                    if (!mainsystem.IS_PATIENT_REGISTERED(patientId)) {
+                        System.out.println("Error: Patient ID " + patientId + " is not registered.");
                     } else {
-                        for (String log : logs) System.out.println(log);
-                        EMHASEMERGENCYACCESS.ACCESSEMERGENCY(logs, patientId);
+                        PatientRecord record = mainsystem.ACCESS_EMERGENCY(patientId);
+                        if (record == null) {
+                        System.out.println("No records found for Patient ID: " + patientId);
+                        } else {
+                        EMHASEMERGENCYACCESS.ACCESSEMERGENCY(
+                        patientId,
+                        record.getName(),
+                        record.getBloodType(),
+                        record.getEmergencyContact(),
+                        record.getAllergies(),
+                        record.getConditions(),
+                        record.getMedications(),
+                        record.getFamilyHistory(),
+                        record.getImmunizations()
+                        );
                         mainsystem.LOG_ACCESS(currentFullName, currentUserProfession, patientId, "Emergency Record Access");
+                        }
+
                     }
 
                 } else if (Option == 5) {
@@ -149,14 +162,24 @@ public class EMHASAPP {
                     if (!mainsystem.IS_PATIENT_REGISTERED(patientId)) {
                         System.out.println("Error: Patient ID " + patientId + " is not registered.");
                     } else {
-                        List<String> logs = mainsystem.ACCESS_EMERGENCY(patientId);
-                        if (logs.isEmpty()) {
-                            System.out.println("No emergency records found for Patient ID: " + patientId);
+                        PatientRecord record = mainsystem.ACCESS_EMERGENCY(patientId);
+                        if (record == null) {
+                        System.out.println("No records found for Patient ID: " + patientId);
                         } else {
-                            for (String log : logs) System.out.println(log);
-                            EMHASEMERGENCYACCESS.ACCESSEMERGENCY(logs, patientId);
-                            mainsystem.LOG_ACCESS(currentFullName, currentUserProfession, patientId, "Emergency Record Access");
+                        EMHASEMERGENCYACCESS.ACCESSEMERGENCY(
+                        patientId,
+                        record.getName(),
+                        record.getBloodType(),
+                        record.getEmergencyContact(),
+                        record.getAllergies(),
+                        record.getConditions(),
+                        record.getMedications(),
+                        record.getFamilyHistory(),
+                        record.getImmunizations()
+                        );
+                        mainsystem.LOG_ACCESS(currentFullName, currentUserProfession, patientId, "Emergency Record Access");
                         }
+
                     }
 
                 } else if (Option == 5) {
