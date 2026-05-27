@@ -4,9 +4,11 @@ import java.text.SimpleDateFormat;
 
 public class MAINSYSTEM {
     
+    // validate login credentials based on role and table
     public boolean TEST_LOGIN(String username, String password, String role){
         String table = "";
         
+        // determine table based on profession
         if (role.equalsIgnoreCase("Admin")){
             table = "admin";
         } else if (role.equalsIgnoreCase("Medical Technician")){
@@ -22,6 +24,8 @@ public class MAINSYSTEM {
             System.out.println("Invalid Profession Selected.");
             return false;
         }
+
+        // query to check username and password
         String SELECTQUERY = "SELECT username, password FROM " + table + " WHERE username = ? AND password = ?";
         try (Connection connection = DATACONNECTION.getConnection()){
             PreparedStatement prepstat = connection.prepareStatement(SELECTQUERY);
@@ -36,6 +40,7 @@ public class MAINSYSTEM {
         }
     }
 
+    // register new patient with details and medical history
     public boolean REGISTER_PATIENT(String patientid, String fname, String lname, String mi,
         String dob_month, int dob_day, int dob_year, String gender, int age,
         String emergencycontact, String bloodtype,
@@ -44,7 +49,7 @@ public class MAINSYSTEM {
         List<String> familyhistory, List<String> immunization) {
 
         try (Connection connection = DATACONNECTION.getConnection()) {
-            // Insert patient core info
+            // insert patient core info
             String INSERTQUERYPATIENT =
                 "INSERT INTO patients (patientid, fname, lname, mi, gender, age, emergencycontact, bloodtype, dob_month, dob_day, dob_year, barangay, city, province) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -66,7 +71,7 @@ public class MAINSYSTEM {
             preppat.setString(14, province);
             preppat.executeUpdate();
 
-            // Allergies
+            // insert allergies list
             String INSERTQUERYALLERGIES = "INSERT INTO patient_allergies (patientid, allergies) VALUES (?, ?)";
             PreparedStatement prepallergy = connection.prepareStatement(INSERTQUERYALLERGIES);
             for (String allergy : allergies) {
@@ -75,7 +80,7 @@ public class MAINSYSTEM {
                 prepallergy.executeUpdate();
             }
 
-            // Conditions
+            // insert conditions list
             String INSERTQUERYCONDITIONS = "INSERT INTO patient_conditions (patientid, conditions) VALUES (?, ?)";
             PreparedStatement prepcondition = connection.prepareStatement(INSERTQUERYCONDITIONS);
             for (String condition : conditions) {
@@ -84,7 +89,7 @@ public class MAINSYSTEM {
                 prepcondition.executeUpdate();
             }
 
-            // Medications
+            // insert medications list
             String INSERTQUERYMEDICATIONS = "INSERT INTO patient_medications (patientid, medications) VALUES (?, ?)";
             PreparedStatement prepmedication = connection.prepareStatement(INSERTQUERYMEDICATIONS);
             for (String medication : medications) {
@@ -93,7 +98,7 @@ public class MAINSYSTEM {
                 prepmedication.executeUpdate();
             }
 
-            // Family Medical History (list)
+            // insert family medical history list
             String INSERTQUERYFAMILY = "INSERT INTO patient_family_history (patientid, pedigree) VALUES (?, ?)";
             PreparedStatement prepfamily = connection.prepareStatement(INSERTQUERYFAMILY);
             for (String pedigree : familyhistory) {
@@ -102,7 +107,7 @@ public class MAINSYSTEM {
                 prepfamily.executeUpdate();
             }
 
-            // Immunizations (list)
+            // insert immunizations list
             String INSERTQUERYIMMUNIZATION = "INSERT INTO patient_immunizations (patientid, vaccine) VALUES (?, ?)";
             PreparedStatement prepimmunization = connection.prepareStatement(INSERTQUERYIMMUNIZATION);
             for (String vaccine : immunization) {
@@ -118,9 +123,11 @@ public class MAINSYSTEM {
         }
     }
 
+    // register new user based on profession
     public boolean REGISTER_USER(String fname, String lname, String mi, String profession, String username, String password){
         String table = "";
 
+        // determine table based on profession
         if (profession.equalsIgnoreCase("Medical Technician")) {
             table = "emergency_medical_technicians";
         } else if (profession.equalsIgnoreCase("ER Physician")) {
@@ -135,6 +142,7 @@ public class MAINSYSTEM {
             return false;
         }
 
+        // insert user into profession table
         String INSERTQUERYUSER = "INSERT INTO " + table + " (fname, lname, mi, profession, username, password) VALUES (?, ?, ?, ?, ?, ?)";
         try(Connection connection = DATACONNECTION.getConnection()){
             PreparedStatement prepuser = connection.prepareStatement(INSERTQUERYUSER);
@@ -152,9 +160,10 @@ public class MAINSYSTEM {
         }
     }
 
-    public PatientRecord ACCESS_EMERGENCY(String patientId) {
+    // fetch patient record for emergency access
+    public PATIENTRECORD ACCESS_EMERGENCY(String patientId) {
         try (Connection connection = DATACONNECTION.getConnection()) {
-
+            // core patient info
             String name = "";
             String bloodType = "";
             String emergencyContact = "";
@@ -164,7 +173,7 @@ public class MAINSYSTEM {
             List<String> familyHistory = new ArrayList<>();
             List<String> immunizations = new ArrayList<>();
 
-            // Patient core info
+            // query patient core info
             String patientQuery = "SELECT fname, lname, mi, bloodtype, emergencycontact FROM patients WHERE patientid = ?";
             PreparedStatement stmt = connection.prepareStatement(patientQuery);
             stmt.setString(1, patientId);
@@ -178,37 +187,38 @@ public class MAINSYSTEM {
                 emergencyContact = rs.getString("emergencycontact");
             }
 
-            // Allergies
+            // fetch allergies
             stmt = connection.prepareStatement("SELECT allergies FROM patient_allergies WHERE patientid = ?");
             stmt.setString(1, patientId);
             rs = stmt.executeQuery();
             while (rs.next()) allergies.add(rs.getString("allergies"));
 
-            // Conditions
+            // fetch conditions
             stmt = connection.prepareStatement("SELECT conditions FROM patient_conditions WHERE patientid = ?");
             stmt.setString(1, patientId);
             rs = stmt.executeQuery();
             while (rs.next()) conditions.add(rs.getString("conditions"));
 
-            // Medications
+            // fetch medications
             stmt = connection.prepareStatement("SELECT medications FROM patient_medications WHERE patientid = ?");
             stmt.setString(1, patientId);
             rs = stmt.executeQuery();
             while (rs.next()) medications.add(rs.getString("medications"));
 
-            // Family Medical History
+            // fetch family history
             stmt = connection.prepareStatement("SELECT pedigree FROM patient_family_history WHERE patientid = ?");
             stmt.setString(1, patientId);
             rs = stmt.executeQuery();
             while (rs.next()) familyHistory.add(rs.getString("pedigree"));
 
-            // Immunizations
+            // fetch immunizations
             stmt = connection.prepareStatement("SELECT vaccine FROM patient_immunizations WHERE patientid = ?");
             stmt.setString(1, patientId);
             rs = stmt.executeQuery();
             while (rs.next()) immunizations.add(rs.getString("vaccine"));
 
-            return new PatientRecord(name, bloodType, emergencyContact,
+            // return patient record object with all emergency details
+            return new PATIENTRECORD(name, bloodType, emergencyContact,
                                     allergies, conditions, medications,
                                     familyHistory, immunizations);
 
@@ -219,6 +229,7 @@ public class MAINSYSTEM {
     }
 
 
+    // check if patient is already registered
     public boolean IS_PATIENT_REGISTERED(String patientId) {
         try (Connection connection = DATACONNECTION.getConnection();
             PreparedStatement prepcheck = connection.prepareStatement("SELECT COUNT(*) FROM patients WHERE patientid = ?")) {
@@ -233,43 +244,63 @@ public class MAINSYSTEM {
         return false;
     }
 
+    // check if a user table is empty
+    public boolean IS_USER_TABLE_EMPTY(String tableName) {
+        String query = "SELECT COUNT(*) FROM " + tableName;
+        try (Connection connection = DATACONNECTION.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1) == 0; // true if no rows
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking table: " + e.getMessage());
+        }
+        return true; // default to empty if error
+    }
+
+
+    // show all registered patients sorted by last name
     public void SHOW_PATIENTS() {
-        try(Connection connection =DATACONNECTION.getConnection()) {
-        String query = "SELECT patientid, fname, lname FROM patients ORDER BY lname ASC";
-        PreparedStatement stmt = connection.prepareStatement(query);
-        ResultSet rs = stmt.executeQuery();
+        try (Connection connection = DATACONNECTION.getConnection()) {
+            String query = "SELECT patientid, fname, lname, mi FROM patients ORDER BY patientid ASC";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
 
-        System.out.println();
-        System.out.println("========================================");
-        System.out.println("|         REGISTERED PATIENTS          |");
-        System.out.println("========================================");
+            System.out.println();
+            System.out.println("========================================");
+            System.out.println("|         REGISTERED PATIENTS          |");
+            System.out.println("========================================");
 
-        int count = 1;
+            int count = 1;
 
-        while(rs.next()) {
+            while (rs.next()) {
+                String patientid = rs.getString("patientid");
+                String mi = rs.getString("mi");
+                if (mi != null && !mi.isEmpty()) {
+                    mi = mi + ".";
+                } else {
+                    mi = "";
+                }
+                String fullname = rs.getString("lname") + ", " + rs.getString("fname") + " " + mi;
+                System.out.println(count + ". " + patientid + " - " + fullname);
+                count++;
+            }
 
-            String patientid = rs.getString("patientid");
-            String fullname = rs.getString("lname") + ", " + rs.getString("fname");
-            System.out.println( count + ". " + patientid + " - " +fullname);
-            count++;
-        }
+            if (count == 1) {
+                System.out.println("No Registered Patients.");
+            }
 
-        if(count == 1) {
-            System.out.println("No Registered Patients.");
-        }
+            System.out.println("========================================");
 
-        System.out.println("========================================");
-
-        } catch(SQLException e) {
-
+        } catch (SQLException e) {
             System.out.println();
             System.out.println("Error Loading Patients: " + e.getMessage());
         }
     }
 
 
-
-
+    // log access attempts to patient records
     public void LOG_ACCESS(String fullname, String profession, String patientId, String action) {
         String query = "INSERT INTO access_logs (fullname, profession, patientid, action) VALUES (?, ?, ?, ?)";
         try(Connection connection = DATACONNECTION.getConnection();
@@ -284,7 +315,7 @@ public class MAINSYSTEM {
         }
     }
 
-    // Fetch logs with date and time separated
+    // fetch all access logs with date and time separated
     public List<String> GET_ALL_ACCESS_LOGS() {
         List<String> logs = new ArrayList<>();
         String query = "SELECT fullname, profession, patientid, action, timestamp FROM access_logs ORDER BY timestamp DESC";
@@ -317,12 +348,12 @@ public class MAINSYSTEM {
         return logs;
     }
 
-    // Build full name from fname, mi, lname in profession tables
+    // getter for logged in user full name based on profession table
     public String GET_FULLNAME(String username, String profession) {
         String fullName = username; // fallback if not found
         String table = "";
 
-        // IMPORTANT: match table names exactly as in phpMyAdmin
+        // match table names exactly as in phpMyAdmin
         if (profession.equals("Paramedic")) table = "paramedics";
         else if (profession.equals("ER Nurse")) table = "er_nurses";
         else if (profession.equals("ER Physician")) table = "emergency_physicians";
@@ -351,7 +382,7 @@ public class MAINSYSTEM {
         return fullName;
     }
 
-
+    // search patient details by patient ID
     public List<String> SEARCH_PATIENT(String patientid){
         List<String> logs = new ArrayList<>();
         try (Connection connection = DATACONNECTION.getConnection()){
@@ -372,7 +403,7 @@ public class MAINSYSTEM {
                     mi = "";
                 }
 
-                logs.add("Patiend ID: " + patientid);
+                logs.add("Patient ID: " + patientid);
                 logs.add("Name: " + rs.getString("fname") + " " + mi + " " + rs.getString("lname"));
                 logs.add("Date of Birth: " + rs.getString("dob_month") + " " + rs.getInt("dob_day") + ", " + 
                         rs.getInt("dob_year"));
@@ -389,7 +420,8 @@ public class MAINSYSTEM {
         }
         return logs;
     }
-    // Update patient name
+
+    // update patient name
     public boolean UPDATE_NAME(String patientId, String fname, String mi, String lname) {
         String query = "UPDATE patients SET fname = ?, mi = ?, lname = ? WHERE patientid = ?";
         try (Connection connection = DATACONNECTION.getConnection();
@@ -405,7 +437,7 @@ public class MAINSYSTEM {
         }
     }
 
-    // Update patient address
+    // update patient address
     public boolean UPDATE_ADDRESS(String patientId, String barangay, String city, String province) {
         String query = "UPDATE patients SET barangay = ?, city = ?, province = ? WHERE patientid = ?";
         try (Connection connection = DATACONNECTION.getConnection();
@@ -421,7 +453,7 @@ public class MAINSYSTEM {
         }
     }
 
-    // Update patient birthdate
+    // update patient birthdate
     public boolean UPDATE_BIRTHDATE(String patientId, String month, int day, int year) {
         String query = "UPDATE patients SET dob_month = ?, dob_day = ?, dob_year = ? WHERE patientid = ?";
         try (Connection connection = DATACONNECTION.getConnection();
@@ -437,7 +469,22 @@ public class MAINSYSTEM {
         }
     }
 
-    // Update patient blood type
+    // update patient gender
+    public boolean UPDATE_GENDER(String patientId, String gender) {
+        String query = "UPDATE patients SET gender = ? WHERE patientid = ?";
+        try (Connection connection = DATACONNECTION.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, gender);
+            stmt.setString(2, patientId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating gender: " + e.getMessage());
+            return false;
+        }
+    }
+
+
+    // update patient blood type
     public boolean UPDATE_BLOODTYPE(String patientId, String bloodType) {
         String query = "UPDATE patients SET bloodtype = ? WHERE patientid = ?";
         try (Connection connection = DATACONNECTION.getConnection();
@@ -451,7 +498,7 @@ public class MAINSYSTEM {
         }
     }
 
-    // Update patient age
+    // update patient age
     public boolean UPDATE_AGE(String patientId, int age) {
         String query = "UPDATE patients SET age = ? WHERE patientid = ?";
         try (Connection connection = DATACONNECTION.getConnection();
@@ -465,7 +512,7 @@ public class MAINSYSTEM {
         }
     }
 
-    // Update emergency contact
+    // update emergency contact
     public boolean UPDATE_EMERGENCYCONTACT(String patientId, String contact) {
         String query = "UPDATE patients SET emergencycontact = ? WHERE patientid = ?";
         try (Connection connection = DATACONNECTION.getConnection();
@@ -479,7 +526,7 @@ public class MAINSYSTEM {
         }
     }
 
-    // Update allergies (replace old with new)
+    // update allergies (replace old with new)
     public boolean UPDATE_ALLERGIES(String patientId, String allergy) {
         String deleteQuery = "DELETE FROM patient_allergies WHERE patientid = ?";
         String insertQuery = "INSERT INTO patient_allergies (patientid, allergies) VALUES (?, ?)";
@@ -498,7 +545,7 @@ public class MAINSYSTEM {
         }
     }
 
-    // Update conditions
+    // update conditions (replace old with new)
     public boolean UPDATE_CONDITIONS(String patientId, String condition) {
         String deleteQuery = "DELETE FROM patient_conditions WHERE patientid = ?";
         String insertQuery = "INSERT INTO patient_conditions (patientid, conditions) VALUES (?, ?)";
@@ -517,7 +564,7 @@ public class MAINSYSTEM {
         }
     }
 
-    // Update medications
+    // update medications (replace old with new)
     public boolean UPDATE_MEDICATIONS(String patientId, String medication) {
         String deleteQuery = "DELETE FROM patient_medications WHERE patientid = ?";
         String insertQuery = "INSERT INTO patient_medications (patientid, medications) VALUES (?, ?)";
@@ -536,7 +583,7 @@ public class MAINSYSTEM {
         }
     }
 
-    // Update pedigree (family medical history)
+    // update pedigree (family medical history)
     public boolean UPDATE_PEDIGREE(String patientId, String pedigree) {
         String deleteQuery = "DELETE FROM patient_family_history WHERE patientid = ?";
         String insertQuery = "INSERT INTO patient_family_history (patientid, pedigree) VALUES (?, ?)";
@@ -555,7 +602,7 @@ public class MAINSYSTEM {
         }
     }
 
-    // Update immunizations
+    // update immunizations (replace old with new)
     public boolean UPDATE_IMMUNIZATIONS(String patientId, String vaccine) {
         String deleteQuery = "DELETE FROM patient_immunizations WHERE patientid = ?";
         String insertQuery = "INSERT INTO patient_immunizations (patientid, vaccine) VALUES (?, ?)";
@@ -572,7 +619,9 @@ public class MAINSYSTEM {
             System.out.println("Error updating immunizations: " + e.getMessage());
             return false;
         }
-    }        
+    }
+
+    // get all allergies for patient
     public List<String> GET_ALLERGIES(String patientId) {
         List<String> allergies = new ArrayList<>();
         String query = "SELECT allergies FROM patient_allergies WHERE patientid = ?";
@@ -589,6 +638,7 @@ public class MAINSYSTEM {
         return allergies;
     }
 
+    // update specific allergy entry
     public boolean UPDATE_SPECIFIC_ALLERGY(String patientId, String oldAllergy, String newAllergy) {
         String query = "UPDATE patient_allergies SET allergies = ? WHERE patientid = ? AND allergies = ?";
         try (Connection connection = DATACONNECTION.getConnection();
@@ -603,7 +653,7 @@ public class MAINSYSTEM {
         }
     }
 
-    // Get all conditions
+    // get all conditions for patient
     public List<String> GET_CONDITIONS(String patientId) {
         List<String> conditions = new ArrayList<>();
         String query = "SELECT conditions FROM patient_conditions WHERE patientid = ?";
@@ -620,6 +670,7 @@ public class MAINSYSTEM {
         return conditions;
     }
 
+    // update specific condition entry
     public boolean UPDATE_SPECIFIC_CONDITION(String patientId, String oldCondition, String newCondition) {
         String query = "UPDATE patient_conditions SET conditions = ? WHERE patientid = ? AND conditions = ?";
         try (Connection connection = DATACONNECTION.getConnection();
@@ -632,9 +683,8 @@ public class MAINSYSTEM {
             System.out.println("Error updating condition: " + e.getMessage());
             return false;
         }
-    }
-
-    // Get all medications
+    }   
+    // get all medications for patient
     public List<String> GET_MEDICATIONS(String patientId) {
         List<String> medications = new ArrayList<>();
         String query = "SELECT medications FROM patient_medications WHERE patientid = ?";
@@ -651,6 +701,7 @@ public class MAINSYSTEM {
         return medications;
     }
 
+    // update specific medication entry
     public boolean UPDATE_SPECIFIC_MEDICATION(String patientId, String oldMed, String newMed) {
         String query = "UPDATE patient_medications SET medications = ? WHERE patientid = ? AND medications = ?";
         try (Connection connection = DATACONNECTION.getConnection();
@@ -665,7 +716,7 @@ public class MAINSYSTEM {
         }
     }
 
-    // Get all pedigree entries
+    // get all pedigree entries (family medical history)
     public List<String> GET_PEDIGREE(String patientId) {
         List<String> pedigree = new ArrayList<>();
         String query = "SELECT pedigree FROM patient_family_history WHERE patientid = ?";
@@ -682,6 +733,7 @@ public class MAINSYSTEM {
         return pedigree;
     }
 
+        // update specific pedigree entry (family medical history)
     public boolean UPDATE_SPECIFIC_PEDIGREE(String patientId, String oldPedigree, String newPedigree) {
         String query = "UPDATE patient_family_history SET pedigree = ? WHERE patientid = ? AND pedigree = ?";
         try (Connection connection = DATACONNECTION.getConnection();
@@ -696,7 +748,7 @@ public class MAINSYSTEM {
         }
     }
 
-    // Get all immunizations
+    // get all immunizations for patient
     public List<String> GET_IMMUNIZATIONS(String patientId) {
         List<String> immunizations = new ArrayList<>();
         String query = "SELECT vaccine FROM patient_immunizations WHERE patientid = ?";
@@ -713,6 +765,7 @@ public class MAINSYSTEM {
         return immunizations;
     }
 
+    // update specific immunization entry
     public boolean UPDATE_SPECIFIC_IMMUNIZATION(String patientId, String oldImmunization, String newImmunization) {
         String query = "UPDATE patient_immunizations SET vaccine = ? WHERE patientid = ? AND vaccine = ?";
         try (Connection connection = DATACONNECTION.getConnection();
@@ -727,6 +780,7 @@ public class MAINSYSTEM {
         }
     }
 
+    // delete specific allergy entry
     public void DELETE_ALLERGY(String patientId, String allergy) {
         try (Connection conn = DATACONNECTION.getConnection()) {
             String sql = "DELETE FROM patient_allergies WHERE patientid = ? AND allergies = ?";
@@ -739,6 +793,7 @@ public class MAINSYSTEM {
         }
     }
 
+    // delete specific condition entry
     public void DELETE_CONDITION(String patientId, String condition) {
         try (Connection conn = DATACONNECTION.getConnection()) {
             String sql = "DELETE FROM patient_conditions WHERE patientid = ? AND conditions = ?";
@@ -751,6 +806,7 @@ public class MAINSYSTEM {
         }
     }
 
+    // delete specific medication entry
     public void DELETE_MEDICATION(String patientId, String medication) {
         try (Connection conn = DATACONNECTION.getConnection()) {
             String sql = "DELETE FROM patient_medications WHERE patientid = ? AND medications = ?";
@@ -763,6 +819,7 @@ public class MAINSYSTEM {
         }
     }
 
+    // delete specific family history entry
     public void DELETE_FAMILY_HISTORY(String patientId, String pedigree) {
         try (Connection conn = DATACONNECTION.getConnection()) {
             String sql = "DELETE FROM patient_family_history WHERE patientid = ? AND pedigree = ?";
@@ -775,6 +832,7 @@ public class MAINSYSTEM {
         }
     }
 
+    // delete specific immunization entry
     public void DELETE_IMMUNIZATION(String patientId, String vaccine) {
         try (Connection conn = DATACONNECTION.getConnection()) {
             String sql = "DELETE FROM patient_immunizations WHERE patientid = ? AND vaccine = ?";
@@ -787,6 +845,7 @@ public class MAINSYSTEM {
         }
     }
 
+    // add new allergy entry
     public void ADD_ALLERGY(String patientId, String allergy) {
         try (Connection conn = DATACONNECTION.getConnection()) {
             String sql = "INSERT INTO patient_allergies (patientid, allergies) VALUES (?, ?)";
@@ -799,6 +858,7 @@ public class MAINSYSTEM {
         }
     }
 
+    // add new condition entry
     public void ADD_CONDITION(String patientId, String condition) {
         try (Connection conn = DATACONNECTION.getConnection()) {
             String sql = "INSERT INTO patient_conditions (patientid, conditions) VALUES (?, ?)";
@@ -811,6 +871,8 @@ public class MAINSYSTEM {
         }
     }
 
+
+    // add new medication entry
     public void ADD_MEDICATION(String patientId, String medication) {
         try (Connection conn = DATACONNECTION.getConnection()) {
             String sql = "INSERT INTO patient_medications (patientid, medications) VALUES (?, ?)";
@@ -823,6 +885,7 @@ public class MAINSYSTEM {
         }
     }
 
+    // add new family history entry
     public void ADD_FAMILY_HISTORY(String patientId, String pedigree) {
         try (Connection conn = DATACONNECTION.getConnection()) {
             String sql = "INSERT INTO patient_family_history (patientid, pedigree) VALUES (?, ?)";
@@ -835,6 +898,7 @@ public class MAINSYSTEM {
         }
     }
 
+    // add new immunization entry
     public void ADD_IMMUNIZATION(String patientId, String vaccine) {
         try (Connection conn = DATACONNECTION.getConnection()) {
             String sql = "INSERT INTO patient_immunizations (patientid, vaccine) VALUES (?, ?)";
@@ -847,7 +911,7 @@ public class MAINSYSTEM {
         }
     }
 }
-                        
+
 
 
 

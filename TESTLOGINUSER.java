@@ -30,14 +30,17 @@ public class TESTLOGINUSER {
         System.out.println("| 2. ER Physician                      |");
         System.out.println("| 3. ER Nurse                          |");
         System.out.println("| 4. Paramedic                         |");
+        System.out.println("| 5. Return To Main Menu               |");
         System.out.println("========================================");
         System.out.println();
 
         int Option = -1;
         try {
+            // select profession
             System.out.print("Choose Option: ");
             Option = Integer.parseInt(INPUT.nextLine());
         } catch (NumberFormatException e) {
+            // handles invalid input
             System.out.println();
             System.out.println("Invalid Choice. Choose Options 1-4 Only.");
             return false;
@@ -55,9 +58,15 @@ public class TESTLOGINUSER {
         }
         else if (Option == 4){
             profession = "Paramedic";
+        } else if (Option == 5){
+            System.out.println();
+            System.out.println("Returning Back To Main Menu.....");
+            // return to main menu
+            return false;
         }
         else {
             System.out.println();
+            // handles invalid input
             System.out.println("Invalid choice. Choose Options 1-4 only.");
             return false;
         }
@@ -65,12 +74,14 @@ public class TESTLOGINUSER {
         // Loop continues while attempts remain and login is not valid
         while (Attempts > 0 && !VALID) {
             System.out.println();
+            // ask user for username and password
             System.out.print("Enter username: ");
             String username = INPUT.nextLine();
             System.out.println();
             System.out.print("Enter password: ");
             String password = INPUT.nextLine();
 
+            // checks if credentials are correct and role matches the selected profession
             if (mainsystem.TEST_LOGIN(username, password, profession)) {
                 System.out.println();
                 System.out.println("Login Successful for " + profession + "!");
@@ -82,24 +93,29 @@ public class TESTLOGINUSER {
 
                 loggedInFullName = mainsystem.GET_FULLNAME(username, profession);
                 loggedInUserProfession = profession;
+
             } else {
                 System.out.println();
+                // login failed, reduces attempts and informs user of remaining attempts
                 Attempts--;
-                System.out.println("Invalid User Credentials. Attempts remaining: " + Attempts);
+                System.out.println("Invalid User Credentials. Attempts Remaining: " + Attempts);
             }
         }
 
         if (!VALID) {
+            // login failed after all attempts, inform user and terminate
             System.out.println();
-            System.out.println("Terminated. Too many failed User login attempts.");
+            System.out.println("Terminated. Too Many Failed User Login Attempts.");
         }
         return VALID;
     }
 
+    // getters for logged in user full name
     public String getLoggedInFullName() {
         return loggedInFullName;
     }
 
+    // getters for logged in user profession
     public String getLoggedInUserProfession() {
         return loggedInUserProfession;
     }

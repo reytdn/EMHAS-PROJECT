@@ -12,7 +12,7 @@ public class EMHASSEARCHPATIENT {
 
     public String SEARCHPATIENT(){
         System.out.println();
-        System.out.print("Enter PatientID to Search: ");
+        System.out.print("Enter Patient ID to Search: ");
         String patientid = INPUT.nextLine();
 
         List<String> logs = mainsystem.SEARCH_PATIENT(patientid);

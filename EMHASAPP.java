@@ -65,7 +65,7 @@ public class EMHASAPP {
                     if (!mainsystem.IS_PATIENT_REGISTERED(patientId)) {
                         System.out.println("Error: Patient ID " + patientId + " is not registered.");
                     } else {
-                        PatientRecord record = mainsystem.ACCESS_EMERGENCY(patientId);
+                        PATIENTRECORD record = mainsystem.ACCESS_EMERGENCY(patientId);
                         if (record == null) {
                         System.out.println("No records found for Patient ID: " + patientId);
                         } else {
@@ -162,7 +162,7 @@ public class EMHASAPP {
                     if (!mainsystem.IS_PATIENT_REGISTERED(patientId)) {
                         System.out.println("Error: Patient ID " + patientId + " is not registered.");
                     } else {
-                        PatientRecord record = mainsystem.ACCESS_EMERGENCY(patientId);
+                        PATIENTRECORD record = mainsystem.ACCESS_EMERGENCY(patientId);
                         if (record == null) {
                         System.out.println("No records found for Patient ID: " + patientId);
                         } else {

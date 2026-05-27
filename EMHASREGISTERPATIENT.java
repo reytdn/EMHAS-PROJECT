@@ -16,17 +16,21 @@ public class EMHASREGISTERPATIENT {
 
         String patientid;
         while (true) {
-        System.out.println();
-        System.out.print("Enter Patient ID: ");
-        patientid = INPUT.nextLine().trim();
-
-        if (!patientid.isEmpty()){
-            break;
-        } else {
             System.out.println();
-            System.out.println("Patient ID cannot be empty.");
+            System.out.print("Enter Patient ID: ");
+            patientid = INPUT.nextLine().trim();
+
+            if (mainsystem.IS_PATIENT_REGISTERED(patientid)) {
+                System.out.println();
+                System.out.println("Patient ID: " + patientid + " Is Already Registered.");
+            } else if (!patientid.isEmpty()) {
+                break;
+            } else {
+                System.out.println();
+                System.out.println("Patient ID Cannot Be Empty.");
+            }
         }
-    }
+
 
     // FIRST NAME
         String fname;
@@ -39,7 +43,7 @@ public class EMHASREGISTERPATIENT {
                 break;
             } else {
                 System.out.println();
-                System.out.println("Letters only.");
+                System.out.println("Letters And Spaces Only For First Name.");
             }
         }
 
@@ -54,7 +58,7 @@ public class EMHASREGISTERPATIENT {
                 break;
             } else {
                 System.out.println();
-                System.out.println("Letters only.");
+                System.out.println("Letters And Spaces Only For Last Name.");
             }
         }
 
@@ -70,7 +74,7 @@ public class EMHASREGISTERPATIENT {
                 break;
             } else {
                 System.out.println();
-                System.out.println("1 letter only.");
+                System.out.println("Please Enter A Single Letter For Middle Initial.");
             }
         }
 
@@ -104,12 +108,12 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("1-12 only.");
+                    System.out.println("Invalid Choice. Please enter numbers 1-12 only.");
                 }
 
             } catch(Exception e){
                 System.out.println();
-                System.out.println("Numbers only.");
+                System.out.println("Invalid Choice. Please enter numbers 1-12 only.");
                 INPUT.nextLine();
             }
         }
@@ -129,12 +133,12 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Invalid year.");
+                    System.out.println("Invalid Year.");
                 }
 
             } catch(Exception e){
                 System.out.println();
-                System.out.println("Numbers only.");
+                System.out.println("Invalid Input! Numbers Only.");
                 INPUT.nextLine();
             }
         }
@@ -163,12 +167,12 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Invalid day for selected month.");
+                    System.out.println("Invalid Day for Selected Month.");
                 }
 
             } catch(Exception e){
                 System.out.println();
-                System.out.println("Numbers only.");
+                System.out.println("Invalid Input! Numbers Only.");
                 INPUT.nextLine();
             }
         }
@@ -183,7 +187,7 @@ public class EMHASREGISTERPATIENT {
 
                 if (age < 0 || age > 150) {
                     System.out.println();
-                    System.out.println("Age must be 0-150 only.");
+                    System.out.println("Age Must Be Between 0 And 150.");
                     continue;
                 }
 
@@ -197,12 +201,12 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Age does not match birthdate.");
+                    System.out.println("Age Does Not Match Birthdate.");
                 }
 
             } catch (Exception e) {
                 System.out.println();
-                System.out.println("Numbers only.");
+                System.out.println("Invalid Input! Numbers Only.");
                 INPUT.nextLine();
             }
         }
@@ -239,7 +243,7 @@ public class EMHASREGISTERPATIENT {
                 break;
             } else {
                 System.out.println();
-                System.out.println("Must be 11 digits.");
+                System.out.println("Invalid Contact Number. Please Enter Exactly 11 Digits.");
             }
         }
 
@@ -253,7 +257,7 @@ public class EMHASREGISTERPATIENT {
                 break;
             } else {
                 System.out.println();
-                System.out.println("Barangay cannot be empty.");
+                System.out.println("Barangay Cannot Be Empty.");
             }
         }
 
@@ -268,7 +272,7 @@ public class EMHASREGISTERPATIENT {
                 break;
             } else {
                 System.out.println();
-                System.out.println("Letters only.");
+                System.out.println("Barangay Cannot Be Empty.");
             }
         }
 
@@ -283,7 +287,7 @@ public class EMHASREGISTERPATIENT {
                 break;
             } else {
                 System.out.println();
-                System.out.println("Letters only.");
+                System.out.println("Letters And Spaces Only For City.");
             }
         }
 
@@ -313,12 +317,12 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("1-8 only.");
+                    System.out.println("Invalid Choice. Please enter numbers 1-8 only.");
                 }
 
             } catch(Exception e){
                 System.out.println();
-                System.out.println("Numbers only.");
+                System.out.println("Invalid Choice. Please enter numbers 1-8 only.");
                 INPUT.nextLine();
             }
         }
@@ -358,12 +362,12 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Must be 0 or more.");
+                    System.out.println("Must Be 0 or More.");
                 }
 
             } catch (Exception e) {
                 System.out.println();
-                System.out.println("Numbers only.");
+                System.out.println("Numbers Only.");
                 INPUT.nextLine(); 
             }
         }
@@ -379,7 +383,7 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Cannot be empty.");
+                    System.out.println("Cannot Be Empty.");
                 }
             }
         }
@@ -398,12 +402,12 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Must be 0 or more.");
+                    System.out.println("Must Be 0 or More.");
                 }
 
             } catch (Exception e) {
                 System.out.println();
-                System.out.println("Numbers only.");
+                System.out.println("Numbers Only.");
                 INPUT.nextLine();
             }
         }
@@ -419,7 +423,7 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Cannot be empty.");
+                    System.out.println("Cannot Be Empty.");
                 }
             }
         }
@@ -440,12 +444,12 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Must be 0 or more.");
+                    System.out.println("Must Be 0 or More.");
                 }
 
             } catch (Exception e) {
                 System.out.println();
-                System.out.println("Numbers only.");
+                System.out.println("Numbers Only.");
                 INPUT.nextLine();
             }
         }
@@ -461,7 +465,7 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Cannot be empty.");
+                    System.out.println("Cannot Be Empty.");
                 }
             }
         }
@@ -482,12 +486,12 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Must be 0 or more.");
+                    System.out.println("Must Be 0 or More.");
                 }
 
             } catch (Exception e) {
                 System.out.println();
-                System.out.println("Numbers only.");
+                System.out.println("Numbers Only.");
                 INPUT.nextLine();
             }
         }
@@ -503,7 +507,7 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Cannot be empty.");
+                    System.out.println("Cannot Be Empty.");
                 }
             }
         }
@@ -523,12 +527,12 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Must be 0 or more.");
+                    System.out.println("Must Be 0 or More.");
                 }
 
             } catch (Exception e) {
                 System.out.println();
-                System.out.println("Numbers only.");
+                System.out.println("Numbers Only.");
                 INPUT.nextLine();
             }
         }
@@ -544,7 +548,7 @@ public class EMHASREGISTERPATIENT {
                     break;
                 } else {
                     System.out.println();
-                    System.out.println("Cannot be empty.");
+                    System.out.println("Cannot Be Empty.");
                 }
             }
         }
@@ -560,9 +564,11 @@ public class EMHASREGISTERPATIENT {
         );
 
         if(VALID){
-            System.out.println("Patient registered successfully!");
+            System.out.println();
+            System.out.println("Patient Registered Successfully!");
         } else {
-            System.out.println("Failed to register patient.");
+            System.out.println();
+            System.out.println("Failed To Register Patient.");
         }
     }
 }

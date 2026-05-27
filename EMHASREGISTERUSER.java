@@ -18,19 +18,36 @@ public class EMHASREGISTERUSER {
         // get first name
         System.out.println();
         System.out.print("Enter First Name: ");
-        String fname = INPUT.nextLine();
+        String fname = INPUT.nextLine().trim();
+        if (fname.isEmpty() && !fname.matches("[a-zA-Z]+")) {
+            System.out.println();
+            System.out.println("First Name Must Contain Letters Only And Cannot Be Empty.");
+            return;
+        }
  
         // get last name
         System.out.println();
         System.out.print("Enter Last Name: ");
-        String lname = INPUT.nextLine();
+        String lname = INPUT.nextLine().trim();
+        if (lname.isEmpty() && !lname.matches("[a-zA-Z]+")) {
+            System.out.println();
+            System.out.println("Last Name Must Contain Letters Only And Cannot Be Empty.");
+            return;
+        }
  
         // get middle name
         System.out.println();
         System.out.print("Enter Middle Initial: ");
-        String mi = INPUT.nextLine(); //A.
+        String mi = INPUT.nextLine().trim();
+
+        // must be exactly one letter, no symbols or dots
+        if (mi.isEmpty() || !mi.matches("[A-Za-z]")) {
+            System.out.println();
+            System.out.println("Middle Initial Must Be Exactly One Letter (A-Z Only, No Symbols or Periods).");
+            return;
+        }
        
-        // show profession menu
+         // show profession menu
         System.out.println();
         System.out.println("========================================");
         System.out.println("|        USER PROFESSION OPTIONS       |");
@@ -41,31 +58,33 @@ public class EMHASREGISTERUSER {
         System.out.println("| 4. Paramedic                         |");
         System.out.println("========================================");
         System.out.println();
-
-        // choose profession
-        System.out.print("Select Option: ");
-        int Option = INPUT.nextInt();
-        INPUT.nextLine(); // clear input buffer
  
+        // choose profession
+        int Option = -1;
+        try {
+            System.out.print("Select Option: ");
+            Option = INPUT.nextInt();
+            INPUT.nextLine();
+        } catch (InputMismatchException e) {
+            System.out.println();
+            System.out.println("Invalid Input. Please Enter A Number Only.");
+            INPUT.nextLine();
+            return;
+        }
+
+        if (Option < 1 || Option > 4) {
+            System.out.println("Invalid Choice. Choose Options 1-4 Only.");
+            return;
+        }
  
         // store profession
         String profession = "";
        
         // assign profession based on input
-        if (Option == 1){
-            profession = "Medical Technician";
-        } else if (Option == 2){
-            profession = "ER Physician";
-        } else if (Option == 3){
-            profession = "ER Nurse";
-        } else if (Option == 4){
-            profession = "Paramedic";
-        } else {
-            // invalid input
-            System.out.println();
-            System.out.println("Invalid Choice. Choose Options 1-4 Only.");
-            return;
-        }
+        if (Option == 1) profession = "Medical Technician";
+        else if (Option == 2) profession = "ER Physician";
+        else if (Option == 3) profession = "ER Nurse";
+        else if (Option == 4) profession = "Paramedic";
  
         // get username
         System.out.println();
@@ -88,7 +107,7 @@ public class EMHASREGISTERUSER {
  
             // awww failed message
             System.out.println();
-            System.out.println("Failed to register user.");
+            System.out.println("Failed To Register User.");
         }
     }
 }

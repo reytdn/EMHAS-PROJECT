@@ -24,12 +24,28 @@ public class PATIENTRECORD {
         this.immunizations = immunizations;
     }
 
-    public String getName() { return name; }
-    public String getBloodType() { return bloodType; }
-    public String getEmergencyContact() { return emergencyContact; }
-    public List<String> getAllergies() { return allergies; }
-    public List<String> getConditions() { return conditions; }
-    public List<String> getMedications() { return medications; }
-    public List<String> getFamilyHistory() { return familyHistory; }
-    public List<String> getImmunizations() { return immunizations; }
+    public String getName() { 
+        return name; 
+    }
+    public String getBloodType() { 
+        return bloodType; 
+    }
+    public String getEmergencyContact() { 
+        return emergencyContact; 
+    }
+    public List<String> getAllergies() { 
+        return allergies; 
+    }
+    public List<String> getConditions() { 
+        return conditions; 
+    }
+    public List<String> getMedications() { 
+        return medications; 
+    }
+    public List<String> getFamilyHistory() { 
+        return familyHistory; 
+    }
+    public List<String> getImmunizations() { 
+        return immunizations; 
+    }
 }

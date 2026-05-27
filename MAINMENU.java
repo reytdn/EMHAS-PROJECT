@@ -31,9 +31,11 @@ public class MAINMENU {
                     if (Option >= 1 && Option <= 3) {
                         valid = true; // valid input
                     } else {
+                        System.out.println();
                         System.out.println("Invalid Choice. Please enter 1-3 only.");
                     }
                 } catch (InputMismatchException e) {
+                    System.out.println();
                     System.out.println("Invalid input! Please enter numbers only (1-3).");
                     INPUT.nextLine(); // clear invalid input
                 }
@@ -41,13 +43,24 @@ public class MAINMENU {
 
             // Handle valid options
             if (Option == 1) {
-                if (testloginadmin.REQUEST()) {
+                // check admin table
+                if (mainsystem.IS_USER_TABLE_EMPTY("admin")) {
+                    System.out.println();
+                    System.out.println("No User Found");
+                } else if (testloginadmin.REQUEST()) {
                     String currentFullName = testloginadmin.getLoggedInFullName();
                     String userProfession = testloginadmin.getLoggedInUserProfession();
                     EMHASAPP.second("Admin", mainsystem, INPUT, currentFullName, userProfession);
                 }
             } else if (Option == 2) {
-                if (testloginuser.REQUEST()) {
+                // check user tables (technicians, physicians, nurses, paramedics)
+                if (mainsystem.IS_USER_TABLE_EMPTY("emergency_medical_technicians") &&
+                    mainsystem.IS_USER_TABLE_EMPTY("emergency_physicians") &&
+                    mainsystem.IS_USER_TABLE_EMPTY("er_nurses") &&
+                    mainsystem.IS_USER_TABLE_EMPTY("paramedics")) {
+                    System.out.println();
+                    System.out.println("No User Found!");
+                } else if (testloginuser.REQUEST()) {
                     String currentFullName = testloginuser.getLoggedInFullName();
                     String userProfession = testloginuser.getLoggedInUserProfession();
                     EMHASAPP.second("User", mainsystem, INPUT, currentFullName, userProfession);

@@ -9,6 +9,7 @@ import java.util.List;
 
 public class EMHASEMERGENCYACCESS {
 
+    // generate emergency access PDF for a patient
     public static void ACCESSEMERGENCY(String patientId,
                                        String patientName,
                                        String bloodType,
@@ -22,7 +23,7 @@ public class EMHASEMERGENCYACCESS {
             PDPage page = new PDPage(PDRectangle.A4);
             document.addPage(page);
 
-            // Load fonts
+            // load fonts (Arial regular and bold)
             PDType0Font arial = PDType0Font.load(document, new File("C:/Windows/Fonts/arial.ttf"));
             PDType0Font arialBold = PDType0Font.load(document, new File("C:/Windows/Fonts/arialbd.ttf"));
 
@@ -32,15 +33,15 @@ public class EMHASEMERGENCYACCESS {
             float yStart = 750;
             float rowHeight = 25;
 
-            // ✅ Add MediRush logo (upper left)
+            // add MediRush logo (upper left corner)
             PDImageXObject mediRushLogo = PDImageXObject.createFromFile("MEDIRUSHLOGO.jpg", document);
             content.drawImage(mediRushLogo, margin, page.getMediaBox().getHeight() - 100, 80, 80);
 
-            // ✅ Add DOH logo (upper right)
+            // add DOH logo (upper right corner)
             PDImageXObject dohLogo = PDImageXObject.createFromFile("DOHLOGO.png", document);
             content.drawImage(dohLogo, page.getMediaBox().getWidth() - margin - 80, page.getMediaBox().getHeight() - 100, 80, 80);
 
-            // Title
+            // add title with patient ID
             content.setFont(arialBold, 18);
             content.beginText();
             content.newLineAtOffset(margin, yStart - 50);
@@ -49,7 +50,7 @@ public class EMHASEMERGENCYACCESS {
 
             yStart -= 100;
 
-            // Patient core info
+            // patient core info (name, blood type, emergency contact)
             content.setFont(arialBold, 14);
             content.beginText();
             content.newLineAtOffset(margin, yStart);
@@ -70,13 +71,13 @@ public class EMHASEMERGENCYACCESS {
 
             yStart -= 10;
 
-            // Draw medical info table (✅ fixed call includes page)
+            // draw medical info table (5 columns: allergies, conditions, medications, pedigrees, vaccines)
             yStart = drawMedicalTable(content, page, arial, arialBold, margin, yStart, rowHeight,
                                       allergies, conditions, medications, familyHistory, immunizations);
 
             content.close();
 
-            // Save into PATIENTDETAILS folder
+            // save PDF into PATIENTDETAILS folder
             String folderPath = "PATIENTDETAILS";
             File folder = new File(folderPath);
             if (!folder.exists()) folder.mkdirs();
@@ -85,7 +86,7 @@ public class EMHASEMERGENCYACCESS {
             document.save(new File(fileName));
             System.out.println("PDF generated: " + fileName);
 
-            // Auto-open PDF
+            // auto-open PDF after saving
             File pdfFile = new File(fileName);
             if (pdfFile.exists()) {
                 java.awt.Desktop.getDesktop().open(pdfFile);
@@ -96,7 +97,7 @@ public class EMHASEMERGENCYACCESS {
         }
     }
 
-    // Helper method to draw the 5-column medical info table
+    // helper method to draw the 5-column medical info table
     private static float drawMedicalTable(PDPageContentStream content, PDPage page,
                                           PDType0Font arial, PDType0Font arialBold,
                                           float margin, float yStart, float rowHeight,
@@ -104,12 +105,13 @@ public class EMHASEMERGENCYACCESS {
                                           List<String> medications, List<String> familyHistory,
                                           List<String> immunizations) throws IOException {
 
+        // table headers
         String[] headers = {"ALLERGIES", "CONDITIONS", "MEDICATIONS", "PEDIGREES", "VACCINES"};
         int cols = headers.length;
-        float tableWidth = page.getMediaBox().getWidth() - 2 * margin;  // ✅ fixed
+        float tableWidth = page.getMediaBox().getWidth() - 2 * margin;
         float colWidth = tableWidth / cols;
 
-        // Draw headers
+        // draw header text centered in each column
         content.setFont(arialBold, 12);
         for (int i = 0; i < headers.length; i++) {
             float textWidth = arialBold.getStringWidth(headers[i]) / 1000 * 12;
@@ -121,18 +123,20 @@ public class EMHASEMERGENCYACCESS {
             content.endText();
         }
 
-        // Determine max rows among all lists
+        // determine max rows among all lists
         int maxRows = Math.max(allergies.size(),
                        Math.max(conditions.size(),
                        Math.max(medications.size(),
                        Math.max(familyHistory.size(), immunizations.size()))));
 
-        // Draw grid
+        // draw horizontal grid lines
         for (int i = 0; i <= maxRows + 1; i++) {
             float y = yStart - i * rowHeight;
             content.moveTo(margin, y);
             content.lineTo(margin + tableWidth, y);
         }
+
+        // draw vertical grid lines
         for (int i = 0; i <= cols; i++) {
             float x = margin + i * colWidth;
             content.moveTo(x, yStart);
@@ -140,7 +144,7 @@ public class EMHASEMERGENCYACCESS {
         }
         content.stroke();
 
-        // Fill rows
+        // fill table rows with patient data
         content.setFont(arial, 11);
         for (int row = 0; row < maxRows; row++) {
             if (row < allergies.size()) {
@@ -175,6 +179,7 @@ public class EMHASEMERGENCYACCESS {
             }
         }
 
+        // return updated yStart position after table
         return yStart - (maxRows + 1) * rowHeight;
     }
 }

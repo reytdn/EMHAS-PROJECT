@@ -1,4 +1,4 @@
-import java.util.*;
+import java.util.*; 
 
 public class TESTLOGINADMIN {
  
@@ -18,7 +18,7 @@ public class TESTLOGINADMIN {
         this.scanner = scanner;
     }
  
-    // handles admin login requests, allows users to log in their credentials and checks if they have admin role
+    // method to handle admin login requests, allows admins to attempt to log in with their credentials and tracks login attempts
     public boolean REQUEST() {
         // Maximum number of login attempts allowed
         int Attempts = 3;
@@ -52,13 +52,13 @@ public class TESTLOGINADMIN {
                 // login failed, reduces attempts and informs user of remaining attempts
                 System.out.println();
                 Attempts--;
-                System.out.println("Invalid Admin Credentials. Attempts remaining: " + Attempts);
+                System.out.println("Invalid Admin Credentials. Attempts Remaining: " + Attempts);
             }
         }
  
         // login failed after all attempts, inform user and terminate
         if (!VALID) {
-            System.out.println("Terminated. Too many failed Admin login attempts.");
+            System.out.println("Terminated. Too Many Failed Admin Login Attempts.");
         }
  
         // return whether login was successful or not
