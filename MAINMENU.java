@@ -16,13 +16,13 @@ public class MAINMENU {
             System.out.println("| 2. USER ROLE                         |");
             System.out.println("| 3. EXIT                              |");
             System.out.println("========================================");
-            System.out.println();
 
             int Option = -1;
             boolean valid = false;
 
             // Error trap loop for main menu input
             while (!valid) {
+                System.out.println();
                 System.out.print("Choose Option: ");
                 try {
                     Option = INPUT.nextInt();
@@ -68,6 +68,7 @@ public class MAINMENU {
             } else if (Option == 3) {
                 System.out.println();
                 System.out.println("Exiting Program. Goodbye!");
+                System.out.println();
                 break;
             }
         }

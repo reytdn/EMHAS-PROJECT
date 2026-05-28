@@ -32,7 +32,7 @@ public class EMHASREGISTERPATIENT {
         }
 
 
-    // FIRST NAME
+        // FIRST NAME
         String fname;
         while(true){
             System.out.println();

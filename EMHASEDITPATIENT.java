@@ -900,11 +900,8 @@ public class EMHASEDITPATIENT {
                 System.out.println("Returning to EMHAS Menu System.... ");
                 break; // exit the edit patient menu and return to the main EMHAS menu
             }
-            
-            
         } 
         // returs the patient id to the main menu after editing is done
         return patientId;
-        
     }
 }
