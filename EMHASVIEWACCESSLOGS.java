@@ -14,7 +14,7 @@ public class EMHASVIEWACCESSLOGS {
 
         if (logs == null || logs.isEmpty()) {
             System.out.println();
-            System.out.println("No emergency access logs found.");
+            System.out.println("No Emergency Access Logs Found.");
         } else {
             System.out.println();
             System.out.println("===== Emergency Access Logs for Patient ID: " + patientId + " =====");
@@ -22,13 +22,13 @@ public class EMHASVIEWACCESSLOGS {
             boolean found = false;
             for (String log : logs) {
                 // filter only logs that match the patientId
-                if (log.contains("Accessed PatientID: " + patientId)) {
+                if (log.contains("Accessed Patient ID: " + patientId)) {
                     System.out.println(log);
                     found = true;
                 }
             }
             if (!found) {
-                System.out.println("No logs found for Patient ID: " + patientId);
+                System.out.println("No Logs Found For Patient ID: " + patientId);
             }
         }
     }

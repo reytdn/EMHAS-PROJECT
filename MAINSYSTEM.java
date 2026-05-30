@@ -3,6 +3,9 @@ import java.util.*;
 import java.text.SimpleDateFormat;
 
 public class MAINSYSTEM {
+    private String currentUsername;
+    private String currentProfession;
+    private String currentFullName;
     
     // validate login credentials based on role and table
     public boolean TEST_LOGIN(String username, String password, String role){
@@ -910,9 +913,149 @@ public class MAINSYSTEM {
             System.out.println("Error adding immunization: " + e.getMessage());
         }
     }
+
+
+
+    public List<String[]> GET_PATIENT_LIST() {
+        List<String[]> patients = new ArrayList<>();
+        try (Connection connection = DATACONNECTION.getConnection()) {
+            String query = "SELECT patientid, fname, lname, mi, age, gender FROM patients ORDER BY patientid ASC";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String patientid = rs.getString("patientid");
+                String mi = rs.getString("mi");
+                if (mi != null && !mi.isEmpty()) mi = mi + ".";
+                else mi = "";
+                String fullname = rs.getString("lname") + ", " + rs.getString("fname") + " " + mi;
+                String age = String.valueOf(rs.getInt("age"));
+                String gender = rs.getString("gender");
+                patients.add(new String[]{patientid, fullname, age, gender});
+            }
+        } catch (Exception e) {
+            System.out.println("Error Loading Patients: " + e.getMessage());
+        }
+        return patients;
+    }
+        // In MAINSYSTEM.java
+    public String[] GET_PATIENT_DETAILS(String patientId) {
+        try (Connection connection = DATACONNECTION.getConnection()) {
+            String query = "SELECT patientid, fname, lname, mi, dob_month, dob_day, dob_year, age, gender, bloodtype, emergencycontact, " +
+                        "CONCAT(barangay, ', ', city, ', ', province) AS address " +
+                        "FROM patients WHERE patientid = ?";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1, patientId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                // Build full name
+                String mi = rs.getString("mi");
+                if (mi != null && !mi.isEmpty()) mi = mi + ".";
+                else mi = "";
+                String fullname = rs.getString("lname") + ", " + rs.getString("fname") + " " + mi;
+
+                // Format birthdate as Month Day, Year
+                String month = rs.getString("dob_month");
+                int day = rs.getInt("dob_day");
+                int year = rs.getInt("dob_year");
+
+                String birthdate = month+ " " + day + ", " + year;
+
+                return new String[]{
+                    rs.getString("patientid"),            // [0] Patient ID
+                    fullname,                             // [1] Name
+                    birthdate,                            // [2] Birthdate (already formatted)
+                    String.valueOf(rs.getInt("age")),     // [3] Age
+                    rs.getString("gender"),               // [4] Gender
+                    rs.getString("bloodtype"),            // [5] Blood Type
+                    rs.getString("emergencycontact"),     // [6] Emergency Contact
+                    rs.getString("address")               // [7] Address
+                };
+            }
+        } catch (Exception e) {
+            System.out.println("Error fetching patient details: " + e.getMessage());
+        }
+        // fallback with 8 slots
+        return new String[]{"", "", "", "", "", "", "", ""};
+    }
+
+
+
+
+    public boolean CHECK_ANY_PROFESSION_REGISTERED(String role) {
+        String tableName;
+
+        if (role.equalsIgnoreCase("Admin")) {
+            tableName = "admin";
+        } else if (role.equalsIgnoreCase("Medical Technician")) {
+            tableName = "emergency_medical_technicians";
+        } else if (role.equalsIgnoreCase("ER Physician")) {
+            tableName = "emergency_physicians";
+        } else if (role.equalsIgnoreCase("ER Nurse")) {
+            tableName = "er_nurses";
+        } else if (role.equalsIgnoreCase("Paramedic")) {
+            tableName = "paramedics";
+        } else {
+            return false; // unknown role
+        }
+
+        try (Connection conn = DATACONNECTION.getConnection()) {
+            String query = "SELECT COUNT(*) FROM " + tableName;
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            System.out.println("Error checking profession table: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public List<String[]> GET_ACCESS_LOGS_FOR_PATIENT(String patientId) {
+        List<String[]> logs = new ArrayList<>();
+        String sql = "SELECT id, fullname, profession, patientid, action, timestamp " +
+                    "FROM access_logs WHERE patientid = ? ORDER BY timestamp ASC";
+
+        try (Connection conn = DATACONNECTION.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, patientId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                logs.add(new String[]{
+                    String.valueOf(rs.getInt("id")),
+                    rs.getString("fullname"),
+                    rs.getString("profession"),
+                    rs.getString("patientid"),
+                    rs.getString("action"),
+                    rs.getTimestamp("timestamp").toString()
+                });
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error retrieving access logs for patient " + patientId + ": " + e.getMessage());
+        }
+        return logs;
+    }
+
+    public void SET_CURRENT_USER(String username, String profession, String fullName) {
+        this.currentUsername = username;
+        this.currentProfession = profession;
+        this.currentFullName = fullName;
+    }
+
+    public String GET_CURRENT_FULLNAME() {
+        return currentFullName != null ? currentFullName : "Unknown User";
+    }
+
+    public String GET_CURRENT_PROFESSION() {
+        return currentProfession != null ? currentProfession : "Unknown Profession";
+    }
+
+
+
+    
 }
-
-
-
-
-

@@ -160,7 +160,8 @@ public class EMHASAPP {
                     System.out.print("Enter Patient ID To View Details: ");
                     String patientId = INPUT.nextLine();
                     if (!mainsystem.IS_PATIENT_REGISTERED(patientId)) {
-                        System.out.println("Error: Patient ID " + patientId + " is not registered.");
+                        System.out.println();
+                        System.out.println("Error: Patient ID " + patientId + " Is Not Registered.");
                     } else {
                         PATIENTRECORD record = mainsystem.ACCESS_EMERGENCY(patientId);
                         if (record == null) {
@@ -181,7 +182,7 @@ public class EMHASAPP {
                         }
 
                     }
-
+                    
                 } else if (Option == 5) {
                     System.out.println();
                     System.out.println("Returning Back To Main Menu.....");
