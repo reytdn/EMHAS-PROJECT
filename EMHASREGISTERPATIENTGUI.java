@@ -9,13 +9,27 @@ import java.util.List;
 public class EMHASREGISTERPATIENTGUI extends JFrame {
     private MAINSYSTEM mainsystem;
 
+    // Flags for confirm buttons
+    private boolean allergiesConfirmed = false;
+    private boolean conditionsConfirmed = false;
+    private boolean medicationsConfirmed = false;
+    private boolean familyConfirmed = false;
+    private boolean immunizationsConfirmed = false;
+
+    // Temporary lists
+    private List<String> allergies = new ArrayList<>();
+    private List<String> conditions = new ArrayList<>();
+    private List<String> medications = new ArrayList<>();
+    private List<String> familyHistory = new ArrayList<>();
+    private List<String> immunizations = new ArrayList<>();
+
     public EMHASREGISTERPATIENTGUI(MAINSYSTEM mainsystem) {
         this.mainsystem = mainsystem;
         setTitle("Register Patient");
-        setSize(500, 700);
+        setSize(600, 750);
         setLocationRelativeTo(null);
 
-        JPanel panel = new JPanel(new GridLayout(0, 2, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(0, 3, 10, 10));
 
         // Patient ID
         JTextField patientIdField = new JTextField(15);
@@ -27,17 +41,22 @@ public class EMHASREGISTERPATIENTGUI extends JFrame {
         // MI scroll box with blank + A–Z
         String[] letters = new String[27];
         letters[0] = "";
-        for (int i = 1; i <= 26; i++) {
-            letters[i] = String.valueOf((char) ('A' + (i - 1)));
-        }
+        for (int i = 1; i <= 26; i++) letters[i] = String.valueOf((char) ('A' + (i - 1)));
         JComboBox<String> miBox = new JComboBox<>(letters);
 
         // DOB fields
         String[] months = {"January","February","March","April","May","June",
                            "July","August","September","October","November","December"};
         JComboBox<String> monthBox = new JComboBox<>(months);
-        JTextField dayField = new JTextField(2);
-        JTextField yearField = new JTextField(4);
+
+        JComboBox<Integer> dayBox = new JComboBox<>();
+        JComboBox<Integer> yearBox = new JComboBox<>();
+        for (int y = 1900; y <= 2026; y++) yearBox.addItem(y);
+
+        // Update days dynamically
+        monthBox.addActionListener(e -> updateDays(dayBox, monthBox, yearBox));
+        yearBox.addActionListener(e -> updateDays(dayBox, monthBox, yearBox));
+
         JTextField ageField = new JTextField(3);
 
         // Gender
@@ -56,65 +75,84 @@ public class EMHASREGISTERPATIENTGUI extends JFrame {
             "O+","O-","A+","A-","B+","B-","AB+","AB-"
         });
 
-        // Counts
+        // Counts + confirm buttons
         JTextField allergyCountField = new JTextField(3);
+        JButton confirmAllergyBtn = new JButton("Confirm");
+
         JTextField conditionCountField = new JTextField(3);
+        JButton confirmConditionBtn = new JButton("Confirm");
+
         JTextField medicationCountField = new JTextField(3);
+        JButton confirmMedicationBtn = new JButton("Confirm");
+
         JTextField familyCountField = new JTextField(3);
+        JButton confirmFamilyBtn = new JButton("Confirm");
+
         JTextField immunizationCountField = new JTextField(3);
+        JButton confirmImmunizationBtn = new JButton("Confirm");
 
         // Add components
-        panel.add(new JLabel("Patient ID:")); panel.add(patientIdField);
-        panel.add(new JLabel("First Name:")); panel.add(fnameField);
-        panel.add(new JLabel("Last Name:")); panel.add(lnameField);
-        panel.add(new JLabel("Middle Initial:")); panel.add(miBox);
-        panel.add(new JLabel("Birth Month:")); panel.add(monthBox);
-        panel.add(new JLabel("Birth Day:")); panel.add(dayField);
-        panel.add(new JLabel("Birth Year:")); panel.add(yearField);
-        panel.add(new JLabel("Age:")); panel.add(ageField);
-        panel.add(new JLabel("Gender:")); panel.add(genderBox);
-        panel.add(new JLabel("Emergency Contact:")); panel.add(emergencyField);
-        panel.add(new JLabel("Barangay:")); panel.add(barangayField);
-        panel.add(new JLabel("City:")); panel.add(cityField);
-        panel.add(new JLabel("Province:")); panel.add(provinceField);
-        panel.add(new JLabel("Blood Type:")); panel.add(bloodBox);
-        panel.add(new JLabel("Allergy Count:")); panel.add(allergyCountField);
-        panel.add(new JLabel("Condition Count:")); panel.add(conditionCountField);
-        panel.add(new JLabel("Medication Count:")); panel.add(medicationCountField);
-        panel.add(new JLabel("Family History Count:")); panel.add(familyCountField);
-        panel.add(new JLabel("Immunization Count:")); panel.add(immunizationCountField);
+        panel.add(new JLabel("Patient ID:")); panel.add(patientIdField); panel.add(new JLabel());
+        panel.add(new JLabel("First Name:")); panel.add(fnameField); panel.add(new JLabel());
+        panel.add(new JLabel("Last Name:")); panel.add(lnameField); panel.add(new JLabel());
+        panel.add(new JLabel("Middle Initial:")); panel.add(miBox); panel.add(new JLabel());
+        panel.add(new JLabel("Birth Month:")); panel.add(monthBox); panel.add(new JLabel());
+        panel.add(new JLabel("Birth Day:")); panel.add(dayBox); panel.add(new JLabel());
+        panel.add(new JLabel("Birth Year:")); panel.add(yearBox); panel.add(new JLabel());
+        panel.add(new JLabel("Age:")); panel.add(ageField); panel.add(new JLabel());
+        panel.add(new JLabel("Gender:")); panel.add(genderBox); panel.add(new JLabel());
+        panel.add(new JLabel("Emergency Contact:")); panel.add(emergencyField); panel.add(new JLabel());
+        panel.add(new JLabel("Barangay:")); panel.add(barangayField); panel.add(new JLabel());
+        panel.add(new JLabel("City:")); panel.add(cityField); panel.add(new JLabel());
+        panel.add(new JLabel("Province:")); panel.add(provinceField); panel.add(new JLabel());
+        panel.add(new JLabel("Blood Type:")); panel.add(bloodBox); panel.add(new JLabel());
 
-        // Confirm dialog with disabled OK until valid
+        panel.add(new JLabel("Allergy Count:")); panel.add(allergyCountField); panel.add(confirmAllergyBtn);
+        panel.add(new JLabel("Condition Count:")); panel.add(conditionCountField); panel.add(confirmConditionBtn);
+        panel.add(new JLabel("Medication Count:")); panel.add(medicationCountField); panel.add(confirmMedicationBtn);
+        panel.add(new JLabel("Family History Count:")); panel.add(familyCountField); panel.add(confirmFamilyBtn);
+        panel.add(new JLabel("Immunization Count:")); panel.add(immunizationCountField); panel.add(confirmImmunizationBtn);
+
+        // Register button
         JButton okButton = new JButton("Register");
-        okButton.setEnabled(false); // disabled initially
+        okButton.setEnabled(false);
 
-        // ✅ Real-time validation listener
-        KeyAdapter validator = new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                // Validator call
-            okButton.setEnabled(isFormValid(patientIdField, fnameField, lnameField,
-                dayField, yearField, ageField, emergencyField,
-                barangayField, cityField, provinceField,
-                allergyCountField, conditionCountField,
-                medicationCountField, familyCountField,
-                immunizationCountField));
-
-
-            }
-        };
-
-        // Attach validator to required fields
-        patientIdField.addKeyListener(validator);
-        fnameField.addKeyListener(validator);
-        lnameField.addKeyListener(validator);
-        dayField.addKeyListener(validator);
-        yearField.addKeyListener(validator);
-        ageField.addKeyListener(validator);
-        emergencyField.addKeyListener(validator);
-        barangayField.addKeyListener(validator);
-        cityField.addKeyListener(validator);
-        provinceField.addKeyListener(validator);
+        // Confirm button actions
+        confirmAllergyBtn.addActionListener(e -> {
+            int count = parseCount(allergyCountField);
+            allergies = collectList("Allergy", count);
+            allergiesConfirmed = true;
+            okButton.setEnabled(allConfirmed(patientIdField, fnameField, lnameField, ageField, emergencyField,
+                                             barangayField, cityField, provinceField));
+        });
+        confirmConditionBtn.addActionListener(e -> {
+            int count = parseCount(conditionCountField);
+            conditions = collectList("Condition", count);
+            conditionsConfirmed = true;
+            okButton.setEnabled(allConfirmed(patientIdField, fnameField, lnameField, ageField, emergencyField,
+                                             barangayField, cityField, provinceField));
+        });
+        confirmMedicationBtn.addActionListener(e -> {
+            int count = parseCount(medicationCountField);
+            medications = collectList("Medication", count);
+            medicationsConfirmed = true;
+            okButton.setEnabled(allConfirmed(patientIdField, fnameField, lnameField, ageField, emergencyField,
+                                             barangayField, cityField, provinceField));
+        });
+        confirmFamilyBtn.addActionListener(e -> {
+            int count = parseCount(familyCountField);
+            familyHistory = collectList("Family History", count);
+            familyConfirmed = true;
+            okButton.setEnabled(allConfirmed(patientIdField, fnameField, lnameField, ageField, emergencyField,
+                                             barangayField, cityField, provinceField));
+        });
+        confirmImmunizationBtn.addActionListener(e -> {
+            int count = parseCount(immunizationCountField);
+            immunizations = collectList("Immunization", count);
+            immunizationsConfirmed = true;
+            okButton.setEnabled(allConfirmed(patientIdField, fnameField, lnameField, ageField, emergencyField,
+                                             barangayField, cityField, provinceField));
+        });
 
         okButton.addActionListener(e -> {
             try {
@@ -123,17 +161,15 @@ public class EMHASREGISTERPATIENTGUI extends JFrame {
                 String lname = lnameField.getText().trim();
                 String mi = (String) miBox.getSelectedItem();
                 String month = (String) monthBox.getSelectedItem();
-                int monthNumber = monthBox.getSelectedIndex() + 1;  
-                int day = Integer.parseInt(dayField.getText().trim());
-                int year = Integer.parseInt(yearField.getText().trim());
+                int monthNumber = monthBox.getSelectedIndex() + 1;
+                int day = (Integer) dayBox.getSelectedItem();
+                int year = (Integer) yearBox.getSelectedItem();
                 int age = Integer.parseInt(ageField.getText().trim());
                 String gender = (String) genderBox.getSelectedItem();
                 String emergency = emergencyField.getText().trim();
                 String barangay = barangayField.getText().trim();
                 String city = cityField.getText().trim();
-                    if (!city.toLowerCase().endsWith(" city")) {
-                        city = city + " City";
-                    }
+                if (!city.toLowerCase().endsWith(" city")) city = city + " City";
                 String province = provinceField.getText().trim();
                 String blood = (String) bloodBox.getSelectedItem();
 
@@ -145,42 +181,17 @@ public class EMHASREGISTERPATIENTGUI extends JFrame {
                     return;
                 }
 
-                // Validate emergency contact
-                if (!emergency.matches("\\d{11}")) {
-                    JOptionPane.showMessageDialog(this, "Emergency contact must be exactly 11 digits!");
-                    return;
-                }
-
-                // Collect lists
-                int allergyCount = parseCount(allergyCountField);
-                int conditionCount = parseCount(conditionCountField);
-                int medicationCount = parseCount(medicationCountField);
-                int familyCount = parseCount(familyCountField);
-                int immunizationCount = parseCount(immunizationCountField);
-
-                List<String> allergies = collectList("Allergy", allergyCount);
-                List<String> conditions = collectList("Condition", conditionCount);
-                List<String> medications = collectList("Medication", medicationCount);
-                List<String> familyHistory = collectList("Family History", familyCount);
-                List<String> immunizations = collectList("Immunization", immunizationCount);
-
                 boolean success = mainsystem.REGISTER_PATIENT(
                     patientId, fname, lname, mi,
-                    month , day, year, gender, age,
+                    month, day, year, gender, age,
                     emergency, blood,
                     barangay, city, province,
                     allergies, conditions, medications,
                     familyHistory, immunizations
                 );
 
-                if (success) {
-                    JOptionPane.showMessageDialog(this, "Patient Registered Successfully!");
-                    dispose(); // ✅ Auto-close panel
-                } else {
-                    JOptionPane.showMessageDialog(this, "Failed To Register Patient.");
-                }
-
-                JOptionPane.showMessageDialog(this, success ? "Patient Registered Successfully!" : "Failed To Register Patient.");
+                                JOptionPane.showMessageDialog(this, success ? "Patient Registered Successfully!" : "Failed To Register Patient.");
+                if (success) dispose();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Invalid input: " + ex.getMessage());
             }
@@ -191,31 +202,22 @@ public class EMHASREGISTERPATIENTGUI extends JFrame {
         setVisible(true);
     }
 
-    // ✅ Helper: check if required fields are filled
-    private boolean isFormValid(JTextField patientId, JTextField fname, JTextField lname,
-                            JTextField day, JTextField year, JTextField age,
-                            JTextField emergency, JTextField barangay,
-                            JTextField city, JTextField province,
-                            JTextField allergyCount, JTextField conditionCount,
-                            JTextField medicationCount, JTextField familyCount,
-                            JTextField immunizationCount) {
-        return !patientId.getText().trim().isEmpty()
-                && !fname.getText().trim().isEmpty()
-                && !lname.getText().trim().isEmpty()
-                && !day.getText().trim().isEmpty()
-                && !year.getText().trim().isEmpty()
-                && !age.getText().trim().isEmpty()
-                && emergency.getText().trim().matches("\\d{11}")
-                && !barangay.getText().trim().isEmpty()
-                && city.getText().trim().matches("[a-zA-Z\\-\\' ]+")
-                && province.getText().trim().matches("[a-zA-Z\\-\\' ]+")
-                && !allergyCount.getText().trim().isEmpty()
-                && !conditionCount.getText().trim().isEmpty()
-                && !medicationCount.getText().trim().isEmpty()
-                && !familyCount.getText().trim().isEmpty()
-                && !immunizationCount.getText().trim().isEmpty();
+    // ✅ Helper: update days based on month/year (leap year logic)
+    private void updateDays(JComboBox<Integer> dayBox, JComboBox<String> monthBox, JComboBox<Integer> yearBox) {
+        dayBox.removeAllItems();
+        int month = monthBox.getSelectedIndex() + 1;
+        int year = (Integer) yearBox.getSelectedItem();
+        int maxDays = 31;
+
+        if (month == 4 || month == 6 || month == 9 || month == 11) {
+            maxDays = 30;
+        } else if (month == 2) {
+            boolean leap = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+            maxDays = leap ? 29 : 28;
+        }
+        for (int d = 1; d <= maxDays; d++) dayBox.addItem(d);
     }
-    
+
     // ✅ Helper: parse count safely
     private int parseCount(JTextField field) {
         try {
@@ -225,7 +227,7 @@ public class EMHASREGISTERPATIENTGUI extends JFrame {
         }
     }
 
-        // ✅ Helper: collect list items
+    // ✅ Helper: collect list items
     private List<String> collectList(String label, int count) {
         List<String> list = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
@@ -233,11 +235,27 @@ public class EMHASREGISTERPATIENTGUI extends JFrame {
             if (item != null && !item.trim().isEmpty()) {
                 list.add(item.trim());
             } else {
-                // If user cancels or leaves blank, enforce non-empty
                 JOptionPane.showMessageDialog(this, label + " " + i + " cannot be empty.");
                 i--; // retry same index
             }
         }
         return list;
     }
+
+    // ✅ Helper: check if all requirements are confirmed
+    private boolean allConfirmed(JTextField patientId, JTextField fname, JTextField lname,
+                                 JTextField age, JTextField emergency,
+                                 JTextField barangay, JTextField city, JTextField province) {
+        return !patientId.getText().trim().isEmpty()
+                && !fname.getText().trim().isEmpty()
+                && !lname.getText().trim().isEmpty()
+                && !age.getText().trim().isEmpty()
+                && emergency.getText().trim().matches("\\d{11}")
+                && !barangay.getText().trim().isEmpty()
+                && city.getText().trim().matches("[a-zA-Z\\-\\' ]+")
+                && province.getText().trim().matches("[a-zA-Z\\-\\' ]+")
+                && allergiesConfirmed && conditionsConfirmed && medicationsConfirmed
+                && familyConfirmed && immunizationsConfirmed;
+    }
+
 }

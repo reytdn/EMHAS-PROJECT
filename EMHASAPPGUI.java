@@ -111,6 +111,7 @@ public class EMHASAPPGUI {
         });
 
         registerBtn.addActionListener(e -> new EMHASREGISTERPATIENTGUI(mainsystem));
+
         logsBtn.addActionListener(e -> new EMHASVIEWACCESSLOGSGUI(mainsystem, fullName, profession));
 
         // Emergency action

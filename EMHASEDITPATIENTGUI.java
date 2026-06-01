@@ -135,11 +135,18 @@ public class EMHASEDITPATIENTGUI extends JFrame {
             return;
         }
 
-        if (category.equals("Allergies")) mainsystem.UPDATE_ALLERGIES(oldValue, newValue);
-        else if (category.equals("Conditions")) mainsystem.UPDATE_CONDITIONS(oldValue, newValue);
-        else if (category.equals("Medications")) mainsystem.UPDATE_MEDICATIONS(oldValue, newValue);
-        else if (category.equals("Pedigrees")) mainsystem.UPDATE_PEDIGREE(oldValue, newValue);
-        else if (category.equals("Immunizations")) mainsystem.UPDATE_IMMUNIZATIONS(oldValue, newValue);
+        // ✅ Use patientId + oldValue + newValue
+        if (category.equals("Allergies")) {
+            mainsystem.UPDATE_SPECIFIC_ALLERGY(patientId, oldValue, newValue);
+        } else if (category.equals("Conditions")) {
+            mainsystem.UPDATE_SPECIFIC_CONDITION(patientId, oldValue, newValue);
+        } else if (category.equals("Medications")) {
+            mainsystem.UPDATE_SPECIFIC_MEDICATION(patientId, oldValue, newValue);
+        } else if (category.equals("Pedigrees")) {
+            mainsystem.UPDATE_SPECIFIC_PEDIGREE(patientId, oldValue, newValue);
+        } else if (category.equals("Immunizations")) {
+            mainsystem.UPDATE_SPECIFIC_IMMUNIZATION(patientId, oldValue, newValue);
+        }
 
         refreshCriticalData();
     }
