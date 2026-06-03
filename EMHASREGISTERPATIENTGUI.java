@@ -242,7 +242,7 @@ public class EMHASREGISTERPATIENTGUI extends JFrame {
         return list;
     }
 
-    // ✅ Helper: check if all requirements are confirmed
+    //  Helper: check if all requirements are confirmed
     private boolean allConfirmed(JTextField patientId, JTextField fname, JTextField lname,
                                  JTextField age, JTextField emergency,
                                  JTextField barangay, JTextField city, JTextField province) {

@@ -345,7 +345,8 @@ public class EMHASEDITPATIENTGUI extends JFrame {
         int result = JOptionPane.showConfirmDialog(this, panel, "Update Birthdate & Age", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             try {
-                int dob_month_option = monthBox.getSelectedIndex() + 1; // ✅ store numeric month
+                int dob_month_option = monthBox.getSelectedIndex() + 1; // used for validation
+                String dob_month_name = (String) monthBox.getSelectedItem(); // ✅ actual month name
                 int dob_day = Integer.parseInt(dayField.getText().trim());
                 int dob_year = Integer.parseInt(yearField.getText().trim());
                 int age = Integer.parseInt(ageField.getText().trim());
@@ -379,8 +380,8 @@ public class EMHASEDITPATIENTGUI extends JFrame {
                 int computedAge = Period.between(birth, today).getYears();
 
                 if (age == computedAge) {
-                    // ✅ Save numeric month to DB
-                    mainsystem.UPDATE_BIRTHDATE(patientId, String.valueOf(dob_month_option), dob_day, dob_year);
+                    // ✅ Save month name (VARCHAR) to DB
+                    mainsystem.UPDATE_BIRTHDATE(patientId, dob_month_name, dob_day, dob_year);
                     mainsystem.UPDATE_AGE(patientId, age);
                     JOptionPane.showMessageDialog(this, "Update Successful");
                     refreshBasicDetails();
@@ -392,5 +393,6 @@ public class EMHASEDITPATIENTGUI extends JFrame {
             }
         }
     }
+
 }
     
